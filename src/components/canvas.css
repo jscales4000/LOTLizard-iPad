@@ -1,0 +1,26 @@
+/* Drop target styling */
+.drop-target {
+  position: relative;
+}
+
+.drop-target.drag-active {
+  outline: 2px dashed #2563eb;
+  outline-offset: -2px;
+  background-color: rgba(37, 99, 235, 0.05);
+}
+
+/* Cursor styling */
+.drop-target.drag-active::after {
+  content: 'Drop to place equipment';
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 100;
+}

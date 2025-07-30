@@ -1,0 +1,1290 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 41,
+        "title": "Set up Next.js 15.4.4 project with TypeScript and React 18",
+        "description": "Initialize the project with Next.js 15.4.4, React 18, and TypeScript as specified in the technical architecture requirements.",
+        "details": "1. Create a new Next.js project using `npx create-next-app@latest lotplanner-ipad-pro`\n2. Configure TypeScript support\n3. Set up project structure following best practices for iPad-optimized web apps\n4. Configure ESLint and Prettier for code quality\n5. Set up Git repository with appropriate .gitignore\n6. Install core dependencies:\n   - React 18\n   - TypeScript\n   - Next.js 15.4.4\n7. Configure build scripts for development and production\n8. Set up environment variables for different environments\n9. Create initial documentation for project setup",
+        "testStrategy": "1. Verify successful project initialization with `npm run dev`\n2. Confirm TypeScript compilation works without errors\n3. Validate ESLint and Prettier configurations\n4. Test build process with `npm run build`\n5. Ensure project runs correctly in iPad Safari browser",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js project with create-next-app",
+            "description": "Create a new Next.js 15.4.4 project with TypeScript and React 18 using the create-next-app command.",
+            "dependencies": [],
+            "details": "Run `npx create-next-app@latest lotplanner-ipad-pro` and select the following options during setup:\n- Would you like to use TypeScript? Yes\n- Would you like to use ESLint? Yes\n- Would you like to use Tailwind CSS? Yes\n- Would you like to use `src/` directory? Yes\n- Would you like to use App Router? Yes\n- Would you like to customize the default import alias? No",
+            "status": "done",
+            "testStrategy": "Verify the project initializes successfully by running `npm run dev` and checking that the development server starts without errors."
+          },
+          {
+            "id": 2,
+            "title": "Configure project structure for iPad-optimized web app",
+            "description": "Set up the project directory structure following best practices for iPad-optimized web applications.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "Create the following directory structure:\n- src/app: Main application routes\n- src/components: Reusable UI components\n- src/hooks: Custom React hooks\n- src/utils: Utility functions\n- src/types: TypeScript type definitions\n- src/styles: Global styles and theme configuration\n- src/lib: Third-party library integrations\n- src/constants: Application constants\n- public/icons: App icons for PWA support\n\nCreate placeholder index files in each directory to maintain structure.",
+            "status": "pending",
+            "testStrategy": "Verify all directories are created correctly and the project structure follows the defined pattern."
+          },
+          {
+            "id": 3,
+            "title": "Configure ESLint and Prettier for code quality",
+            "description": "Set up and configure ESLint and Prettier with rules optimized for TypeScript and React development.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "1. Install additional ESLint and Prettier dependencies:\n```\nnpm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser\n```\n\n2. Create `.prettierrc.js` with configuration:\n```\nmodule.exports = {\n  semi: true,\n  trailingComma: 'all',\n  singleQuote: true,\n  printWidth: 100,\n  tabWidth: 2,\n};\n```\n\n3. Update `.eslintrc.json` to extend prettier and add TypeScript rules\n\n4. Create `.vscode/settings.json` for editor integration",
+            "status": "pending",
+            "testStrategy": "Run ESLint and Prettier on the codebase to verify there are no configuration errors and code formatting works as expected."
+          },
+          {
+            "id": 4,
+            "title": "Set up Git repository with appropriate .gitignore",
+            "description": "Initialize Git repository and configure .gitignore file with appropriate rules for Next.js, TypeScript, and development environments.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "1. Initialize Git repository:\n```\ngit init\n```\n\n2. Update .gitignore to include:\n- Node modules: `node_modules/`\n- Build outputs: `.next/`, `out/`\n- Environment files: `.env*.local`\n- Debug logs: `npm-debug.log*`\n- IDE specific files: `.vscode/` (except settings.json), `.idea/`\n- OS specific files: `.DS_Store`, `Thumbs.db`\n\n3. Create initial commit:\n```\ngit add .\ngit commit -m \"Initial project setup with Next.js 15.4.4, React 18, and TypeScript\"\n```",
+            "status": "pending",
+            "testStrategy": "Verify .gitignore is working correctly by ensuring excluded files are not tracked by Git."
+          },
+          {
+            "id": 5,
+            "title": "Configure environment variables for different environments",
+            "description": "Set up environment variable configuration for development, testing, and production environments.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "1. Create the following environment files:\n- `.env.example` (template with keys but no values)\n- `.env.local` (for local development)\n- `.env.test` (for testing environment)\n- `.env.production` (for production builds)\n\n2. Add the following variables to each file:\n```\nNEXT_PUBLIC_APP_ENV=development|test|production\nNEXT_PUBLIC_API_URL=\nNEXT_PUBLIC_APP_VERSION=0.1.0\n```\n\n3. Create a `src/utils/env.ts` utility to safely access environment variables with type checking",
+            "status": "pending",
+            "testStrategy": "Test environment variable loading in different environments by running the app with different .env files and verifying the correct variables are loaded."
+          },
+          {
+            "id": 6,
+            "title": "Configure build scripts for development and production",
+            "description": "Set up and customize npm scripts for development, building, testing, and deployment.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "Update package.json scripts section to include:\n```json\n\"scripts\": {\n  \"dev\": \"next dev\",\n  \"build\": \"next build\",\n  \"start\": \"next start\",\n  \"lint\": \"next lint\",\n  \"format\": \"prettier --write 'src/**/*.{ts,tsx}'\",\n  \"type-check\": \"tsc --noEmit\",\n  \"validate\": \"npm run lint && npm run type-check\",\n  \"analyze\": \"ANALYZE=true next build\"\n}\n```\n\nInstall required dependencies:\n```\nnpm install --save-dev @next/bundle-analyzer cross-env\n```\n\nCreate next.config.js with bundle analyzer configuration for optimizing bundle size.",
+            "status": "pending",
+            "testStrategy": "Test each script to ensure it runs without errors. Verify the build process creates optimized production assets."
+          },
+          {
+            "id": 7,
+            "title": "Configure iPad-specific viewport and PWA settings",
+            "description": "Set up viewport settings, web app manifest, and initial PWA configuration optimized for iPad Pro devices.",
+            "dependencies": [
+              "41.1"
+            ],
+            "details": "1. Update `src/app/layout.tsx` with iPad-optimized viewport settings:\n```tsx\nexport const metadata = {\n  title: 'LotPlanner for iPad Pro',\n  description: 'Lot planning application optimized for iPad Pro',\n  viewport: 'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no',\n  appleMobileWebAppCapable: 'yes',\n  appleMobileWebAppStatusBarStyle: 'black-translucent'\n};\n```\n\n2. Create `public/manifest.json` with PWA configuration\n\n3. Add appropriate icons in public/icons directory\n\n4. Add meta tags for iOS web app in layout.tsx",
+            "status": "pending",
+            "testStrategy": "Test the application in iPad Safari browser to verify viewport settings are correctly applied and the app can be added to home screen with proper icons."
+          },
+          {
+            "id": 8,
+            "title": "Create initial documentation for project setup",
+            "description": "Create comprehensive documentation for the project setup, including installation instructions, architecture overview, and development guidelines.",
+            "dependencies": [
+              "41.1",
+              "41.2",
+              "41.3",
+              "41.4",
+              "41.5",
+              "41.6",
+              "41.7"
+            ],
+            "details": "Create the following documentation files:\n\n1. `README.md` with:\n   - Project overview and purpose\n   - Installation instructions\n   - Available scripts\n   - Technology stack\n   - Project structure\n   - Development guidelines\n\n2. `CONTRIBUTING.md` with:\n   - Code style guidelines\n   - Pull request process\n   - Branch naming conventions\n\n3. `docs/` directory with:\n   - `architecture.md`: System architecture overview\n   - `ipad-optimization.md`: iPad-specific optimizations\n   - `environment-setup.md`: Development environment setup",
+            "status": "pending",
+            "testStrategy": "Review documentation for completeness and accuracy. Verify a new team member can set up the project by following the documentation."
+          }
+        ]
+      },
+      {
+        "id": 42,
+        "title": "Implement Tailwind CSS with iPad-specific responsive design",
+        "description": "Set up Tailwind CSS and configure it with custom breakpoints and utilities optimized for iPad Pro devices.",
+        "details": "1. Install Tailwind CSS and its dependencies\n2. Configure tailwind.config.js with custom breakpoints for iPad Pro 11\" and 12.9\" models\n3. Set up custom color scheme matching iOS native colors:\n   - Primary: iOS Blue (#007AFF)\n   - Success: iOS Green (#34C759)\n   - Warning: iOS Orange (#FF9500)\n   - Error: iOS Red (#FF3B30)\n4. Create utility classes for iOS-like components (buttons, inputs, etc.)\n5. Configure dark mode support to match iOS dynamic colors\n6. Set up responsive design utilities for different iPad orientations\n7. Create typography system using SF Pro Display and SF Mono fonts\n8. Implement dynamic type support for accessibility",
+        "testStrategy": "1. Verify custom color scheme matches iOS native colors\n2. Test responsive design on different iPad Pro sizes (11\" and 12.9\")\n3. Validate dark mode switching functionality\n4. Test typography system with different font sizes\n5. Verify accessibility compliance with dynamic type",
+        "priority": "high",
+        "dependencies": [
+          41
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure Tailwind CSS with project dependencies",
+            "description": "Set up Tailwind CSS in the project by installing necessary packages and creating the initial configuration files.",
+            "dependencies": [],
+            "details": "1. Install Tailwind CSS and its dependencies using npm or yarn: `npm install -D tailwindcss postcss autoprefixer`\n2. Generate the tailwind.config.js and postcss.config.js files using the initialization command: `npx tailwindcss init -p`\n3. Configure the content paths in tailwind.config.js to specify which files should be processed\n4. Add the Tailwind directives to your CSS file: `@tailwind base; @tailwind components; @tailwind utilities;`\n5. Update your build process to include Tailwind CSS processing",
+            "status": "pending",
+            "testStrategy": "Verify Tailwind CSS is properly installed by testing a basic utility class like 'text-blue-500' and confirming it applies the expected styling."
+          },
+          {
+            "id": 2,
+            "title": "Configure custom breakpoints for iPad Pro devices",
+            "description": "Set up custom breakpoints in the Tailwind configuration specifically optimized for iPad Pro 11\" and 12.9\" models in both portrait and landscape orientations.",
+            "dependencies": [
+              "42.1"
+            ],
+            "details": "1. Modify the tailwind.config.js file to add custom breakpoints for iPad Pro devices:\n```\ntheme: {\n  screens: {\n    'ipad-11-portrait': '834px',\n    'ipad-11-landscape': '1194px',\n    'ipad-12-portrait': '1024px',\n    'ipad-12-landscape': '1366px',\n  }\n}\n```\n2. Add orientation-specific breakpoints:\n```\n'portrait': {'raw': '(orientation: portrait)'},\n'landscape': {'raw': '(orientation: landscape)'}\n```\n3. Create combined breakpoints for specific device/orientation combinations\n4. Document the custom breakpoints for team reference",
+            "status": "pending",
+            "testStrategy": "Test the responsive breakpoints by resizing the browser to match iPad Pro dimensions and verifying that the layout responds appropriately at each breakpoint."
+          },
+          {
+            "id": 3,
+            "title": "Implement iOS native color scheme and dark mode support",
+            "description": "Create a custom color palette matching iOS native colors and implement dark mode support that dynamically adjusts to match iOS system preferences.",
+            "dependencies": [
+              "42.1"
+            ],
+            "details": "1. Define custom colors in tailwind.config.js to match iOS native colors:\n```\ncolors: {\n  'ios-blue': '#007AFF',\n  'ios-green': '#34C759',\n  'ios-orange': '#FF9500',\n  'ios-red': '#FF3B30',\n  // Add dark mode variants\n  'ios-blue-dark': '#0A84FF',\n  'ios-green-dark': '#30D158',\n  'ios-orange-dark': '#FF9F0A',\n  'ios-red-dark': '#FF453A'\n}\n```\n2. Configure dark mode in tailwind.config.js: `darkMode: 'media'`\n3. Create CSS variables for dynamic color switching\n4. Implement a JavaScript utility to detect system dark mode changes\n5. Create utility classes for applying iOS-style colors to elements",
+            "status": "pending",
+            "testStrategy": "Test dark mode by toggling system dark mode and verifying colors update correctly. Compare colors against iOS native UI to ensure they match in both light and dark modes."
+          },
+          {
+            "id": 4,
+            "title": "Create iOS-like component utility classes",
+            "description": "Develop a set of utility classes for common iOS UI components such as buttons, inputs, and cards that match the iOS design language.",
+            "dependencies": [
+              "42.3"
+            ],
+            "details": "1. Create component classes in a separate CSS file using @layer components\n2. Implement iOS-style button classes with proper padding, border-radius, and transitions:\n```\n@layer components {\n  .ios-button {\n    @apply rounded-lg px-4 py-2 font-semibold transition-colors;\n  }\n  .ios-button-primary {\n    @apply ios-button bg-ios-blue text-white dark:bg-ios-blue-dark;\n  }\n  /* Add more button variants */\n}\n```\n3. Create form input styles matching iOS design\n4. Implement card and container components with iOS-like shadows and borders\n5. Add iOS-style toggle switches, segmented controls, and other UI elements\n6. Create documentation with examples for each component",
+            "status": "pending",
+            "testStrategy": "Create a component showcase page displaying all iOS-style components and compare them side-by-side with native iOS components to ensure visual consistency."
+          },
+          {
+            "id": 5,
+            "title": "Implement SF Pro typography system with dynamic type",
+            "description": "Set up a typography system using SF Pro Display and SF Pro Text fonts with support for dynamic type scaling for accessibility.",
+            "dependencies": [
+              "42.1"
+            ],
+            "details": "1. Add SF Pro fonts to the project (ensure proper licensing):\n   - SF Pro Display for headings\n   - SF Pro Text for body content\n   - SF Mono for code\n2. Configure font families in tailwind.config.js:\n```\nfontFamily: {\n  'sf-pro-display': ['SF Pro Display', 'system-ui', 'sans-serif'],\n  'sf-pro-text': ['SF Pro Text', 'system-ui', 'sans-serif'],\n  'sf-mono': ['SF Mono', 'monospace']\n}\n```\n3. Create typography scale matching iOS dynamic type sizes\n4. Implement JavaScript utility to detect and respond to system font size changes\n5. Create utility classes for each dynamic type size\n6. Set up responsive typography that scales appropriately on different iPad models",
+            "status": "pending",
+            "testStrategy": "Test typography by changing system font size settings and verifying text scales appropriately. Verify font rendering matches iOS native appearance across different text sizes."
+          },
+          {
+            "id": 6,
+            "title": "Configure responsive utilities for iPad orientations",
+            "description": "Create specialized responsive utilities for handling different iPad orientations and implement touch-friendly sizing for interactive elements.",
+            "dependencies": [
+              "42.2",
+              "42.4"
+            ],
+            "details": "1. Create orientation-specific utility classes:\n```\n@layer utilities {\n  .portrait-only { @apply block landscape:hidden; }\n  .landscape-only { @apply hidden landscape:block; }\n  /* Add more orientation utilities */\n}\n```\n2. Implement touch-friendly sizing utilities:\n```\n@layer utilities {\n  .touch-target-md { @apply min-h-[44px] min-w-[44px]; }\n  .touch-target-lg { @apply min-h-[54px] min-w-[54px]; }\n}\n```\n3. Create spacing utilities optimized for touch interfaces\n4. Add utilities for handling safe areas and notches\n5. Implement utilities for iPad-specific features (split view, slide over)\n6. Create a responsive grid system optimized for iPad layouts",
+            "status": "pending",
+            "testStrategy": "Test orientation utilities by rotating device/simulator between portrait and landscape modes. Verify touch targets are appropriately sized by testing with touch input on actual iPad devices."
+          }
+        ]
+      },
+      {
+        "id": 43,
+        "title": "Set up Konva.js with React-Konva for canvas rendering",
+        "description": "Implement the core canvas engine using Konva.js and React-Konva for high-performance 2D rendering as specified in the technical architecture.",
+        "details": "1. Install Konva.js and React-Konva packages\n2. Create a base Canvas component with proper sizing for iPad Pro\n3. Implement basic canvas functionality:\n   - Pan/zoom transformations\n   - Layer management\n   - Object rendering\n4. Set up canvas state management using React Context API\n5. Configure canvas for 60fps performance with 1000+ equipment items\n6. Implement canvas virtualization for performance optimization\n7. Set up object pooling for efficient rendering\n8. Configure level-of-detail rendering based on zoom level\n9. Implement ProMotion support for 120Hz refresh rate",
+        "testStrategy": "1. Measure rendering performance with Chrome DevTools\n2. Test canvas with 1000+ simulated equipment items\n3. Verify smooth pan/zoom operations at 60fps minimum\n4. Validate memory usage remains under 2GB for large projects\n5. Test on actual iPad Pro devices to verify ProMotion support",
+        "priority": "high",
+        "dependencies": [
+          41,
+          42
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure Konva.js and React-Konva packages",
+            "description": "Set up the project with Konva.js and React-Konva libraries, ensuring proper configuration for React integration.",
+            "dependencies": [],
+            "details": "Install Konva.js and React-Konva using npm or yarn: 'npm install konva react-konva'. Create a basic project structure with appropriate folders for canvas components. Configure any necessary build tools to support these packages. Verify the installation by creating a simple test component that renders a Konva Stage.",
+            "status": "done",
+            "testStrategy": "Create a simple test component that renders a Konva Stage with a basic shape to verify proper installation and configuration."
+          },
+          {
+            "id": 2,
+            "title": "Create base Canvas component with iPad Pro sizing",
+            "description": "Develop a responsive Canvas component that properly sizes for iPad Pro dimensions and handles device orientation changes.",
+            "dependencies": [
+              "43.1"
+            ],
+            "details": "Create a Canvas.jsx component that uses React-Konva's Stage and Layer components. Set up responsive sizing based on iPad Pro dimensions (12.9-inch: 2732 x 2048px, 11-inch: 2388 x 1668px). Implement orientation detection and resizing. Configure proper pixel ratio handling for Retina displays. Add touch event listeners for basic interaction. Create a container component that manages the canvas size and position.",
+            "status": "pending",
+            "testStrategy": "Test the Canvas component on different iPad Pro sizes and orientations. Verify that the canvas properly resizes and maintains aspect ratio. Check that pixel ratio is handled correctly for crisp rendering."
+          },
+          {
+            "id": 3,
+            "title": "Implement pan and zoom transformations",
+            "description": "Add pan and zoom functionality to the canvas with smooth transformations optimized for touch interactions.",
+            "dependencies": [
+              "43.2"
+            ],
+            "details": "Implement pan functionality using Konva's drag events or custom touch handlers. Add pinch-to-zoom using touch events with proper multi-touch support. Create transformation state (scale, position) in the component. Implement zoom limits to prevent excessive zooming in/out. Add momentum for pan operations for natural feel. Optimize touch event handling for 120Hz ProMotion displays. Implement zoom-to-point functionality so zooming centers on fingers rather than canvas center.",
+            "status": "pending",
+            "testStrategy": "Test pan and zoom operations for smoothness at 60fps. Verify pinch-to-zoom works naturally with multi-touch. Test edge cases like rapid zooming and panning. Measure performance impact during transformations."
+          },
+          {
+            "id": 4,
+            "title": "Set up canvas state management with React Context API",
+            "description": "Create a comprehensive state management system using React Context API to handle canvas state, transformations, and selected objects.",
+            "dependencies": [
+              "43.3"
+            ],
+            "details": "Create a CanvasContext.jsx file with React.createContext(). Implement a CanvasProvider component that wraps the application. Define state for: canvas transformations (scale, position), selected objects, active layers, and viewport information. Create actions and reducers for state modifications. Implement methods for common operations (select, transform, add/remove objects). Add performance optimizations like debouncing for frequent updates. Set up proper state persistence for undo/redo functionality.",
+            "status": "pending",
+            "testStrategy": "Test state updates during canvas interactions. Verify that components correctly consume context values. Check for performance issues with frequent state updates. Test that state properly persists for undo/redo operations."
+          },
+          {
+            "id": 5,
+            "title": "Implement layer management and object rendering",
+            "description": "Create a system for managing multiple canvas layers and efficiently rendering different types of objects within those layers.",
+            "dependencies": [
+              "43.4"
+            ],
+            "details": "Implement a LayerManager class to handle multiple Konva.Layer instances. Create a hierarchy of layers (background, main, foreground, UI). Develop object factories for different equipment types. Implement z-index management for proper stacking. Add layer visibility toggling. Create object caching for performance optimization. Implement object grouping functionality. Add layer export/import capabilities. Set up event propagation between layers.",
+            "status": "pending",
+            "testStrategy": "Test rendering of multiple layers with various objects. Verify proper z-index handling and stacking. Test layer visibility toggling. Measure rendering performance with multiple complex layers. Verify object selection works correctly across layers."
+          },
+          {
+            "id": 6,
+            "title": "Implement performance optimizations for large-scale rendering",
+            "description": "Add advanced performance optimizations to ensure smooth 60fps rendering with 1000+ equipment items, including virtualization and object pooling.",
+            "dependencies": [
+              "43.5"
+            ],
+            "details": "Implement canvas virtualization to only render visible objects. Create an object pooling system for efficient object reuse. Add level-of-detail rendering based on zoom level (simplified shapes when zoomed out). Implement batch updates for multiple object changes. Add frame rate throttling for consistent performance. Optimize event handling to reduce overhead. Implement WebWorker for calculations that could block the main thread. Add performance monitoring tools. Configure ProMotion support for 120Hz refresh rate on compatible devices.",
+            "status": "pending",
+            "testStrategy": "Benchmark rendering performance with 1000+ simulated equipment items. Measure memory usage during intensive operations. Test frame rate stability during pan/zoom with many objects. Verify that virtualization correctly handles off-screen objects. Test on actual iPad Pro devices to verify ProMotion support."
+          }
+        ]
+      },
+      {
+        "id": 44,
+        "title": "Implement multi-touch gesture recognition system",
+        "description": "Create a comprehensive touch and gesture recognition system using react-use-gesture to support all required touch interactions.",
+        "details": "1. Install react-use-gesture package\n2. Implement core gesture handlers for:\n   - Single tap (select equipment or complete measurements)\n   - Double tap (edit mode or detailed view)\n   - Long press (context menus and precision mode)\n   - Drag (move equipment and canvas panning)\n   - Pinch (zoom in/out with smooth scaling)\n   - Two-finger tap (undo operation)\n   - Three-finger swipe (navigate between projects)\n3. Create gesture state management system\n4. Implement haptic feedback simulation for touch interactions\n5. Add 44pt minimum touch targets following Apple HIG\n6. Configure gesture conflict resolution\n7. Implement magnetic snapping and object alignment\n8. Add visual feedback for active gestures",
+        "testStrategy": "1. Test all gesture interactions on actual iPad devices\n2. Verify 44pt minimum touch targets for all interactive elements\n3. Validate gesture conflict resolution works correctly\n4. Test magnetic snapping and alignment functionality\n5. Measure touch response time (<16ms touch-to-visual feedback)",
+        "priority": "high",
+        "dependencies": [
+          43
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up react-use-gesture and basic gesture infrastructure",
+            "description": "Install the react-use-gesture package and set up the core infrastructure for gesture handling in the application.",
+            "dependencies": [],
+            "details": "Install react-use-gesture using npm or yarn. Create a GestureProvider component that will wrap the application and provide gesture context. Set up basic gesture configuration options including debounce settings, touch action properties, and event propagation rules. Create a custom hook (useAppGestures) that will expose gesture functionality to components.",
+            "status": "done",
+            "testStrategy": "Verify successful installation of the package. Test that the GestureProvider renders without errors. Confirm the custom hook returns expected gesture objects."
+          },
+          {
+            "id": 2,
+            "title": "Implement basic touch gestures (tap, double-tap, long-press)",
+            "description": "Implement the core single-touch gesture handlers for tap, double-tap, and long-press interactions.",
+            "dependencies": [
+              "44.1"
+            ],
+            "details": "Create gesture handlers for single tap (for selecting equipment or completing measurements), double tap (for entering edit mode or detailed view), and long press (for context menus and precision mode). Ensure all touch targets follow the 44pt minimum size requirement from Apple HIG. Implement timing configurations for distinguishing between taps and double-taps. Add visual feedback indicators for each gesture type.",
+            "status": "pending",
+            "testStrategy": "Test each gesture on actual iPad devices. Verify correct distinction between tap types. Measure response time to ensure it's under 16ms. Confirm visual feedback appears for each gesture."
+          },
+          {
+            "id": 3,
+            "title": "Implement drag and pan gestures",
+            "description": "Create handlers for drag operations to move equipment and implement canvas panning functionality.",
+            "dependencies": [
+              "44.1"
+            ],
+            "details": "Implement drag gesture handlers with velocity tracking for smooth movement. Create separate handlers for equipment dragging and canvas panning with appropriate thresholds. Add magnetic snapping and object alignment during drag operations. Implement momentum-based panning for natural feel. Create boundary constraints to prevent objects from being dragged off-canvas. Add visual indicators during drag operations.",
+            "status": "pending",
+            "testStrategy": "Test dragging various equipment items. Verify magnetic snapping works correctly. Test canvas panning with different velocities. Confirm boundary constraints prevent off-canvas dragging."
+          },
+          {
+            "id": 4,
+            "title": "Implement pinch and zoom gestures",
+            "description": "Create handlers for pinch gestures to enable smooth zooming functionality.",
+            "dependencies": [
+              "44.1"
+            ],
+            "details": "Implement pinch gesture detection with proper scale factor calculations. Create smooth zoom transitions with animation. Add zoom limits to prevent excessive zooming in/out. Implement focal point zooming to zoom toward pinch center. Create level-of-detail rendering at different zoom levels. Add visual indicators for current zoom level.",
+            "status": "pending",
+            "testStrategy": "Test pinch zooming on actual iPad devices. Verify smooth transitions between zoom levels. Confirm zoom limits work correctly. Test focal point accuracy during zooming."
+          },
+          {
+            "id": 5,
+            "title": "Implement multi-finger gestures",
+            "description": "Create handlers for specialized multi-finger gestures including two-finger tap and three-finger swipe.",
+            "dependencies": [
+              "44.1"
+            ],
+            "details": "Implement two-finger tap detection for undo operations. Create three-finger swipe detection for project navigation. Add rotation gesture support using two fingers. Implement proper touch identification to track multiple simultaneous touches. Create visual guides for available multi-finger gestures. Add haptic feedback simulation for multi-finger interactions.",
+            "status": "pending",
+            "testStrategy": "Test multi-finger gestures on actual iPad devices. Verify correct detection of finger count. Test gesture recognition accuracy with different finger spacings. Confirm haptic feedback works for each gesture."
+          },
+          {
+            "id": 6,
+            "title": "Create gesture state management system",
+            "description": "Implement a comprehensive state management system to track active gestures and handle gesture conflicts.",
+            "dependencies": [
+              "44.2",
+              "44.3",
+              "44.4",
+              "44.5"
+            ],
+            "details": "Create a gesture state store to track active gestures across the application. Implement gesture conflict resolution logic to determine which gesture takes precedence when multiple are detected. Add gesture history tracking for complex interaction sequences. Create a gesture locking mechanism to prevent unwanted gestures during certain operations. Implement gesture state persistence for maintaining state during component re-renders.",
+            "status": "pending",
+            "testStrategy": "Test gesture conflict scenarios to verify correct resolution. Verify gesture state persists correctly during component updates. Test gesture locking during operations that should prevent other gestures."
+          },
+          {
+            "id": 7,
+            "title": "Implement haptic feedback and visual gesture indicators",
+            "description": "Add haptic feedback simulation and visual indicators for all gesture interactions.",
+            "dependencies": [
+              "44.6"
+            ],
+            "details": "Implement haptic feedback simulation for all gesture types with appropriate intensity levels. Create visual indicators for active gestures including touch points, drag paths, and pinch lines. Add animation effects for gesture transitions. Implement gesture success/failure indicators. Create an accessibility mode that enhances visual feedback for users with disabilities. Add sound effects option for gesture feedback.",
+            "status": "pending",
+            "testStrategy": "Test haptic feedback on actual iPad devices. Verify visual indicators appear for all gesture types. Test accessibility mode with screen readers. Confirm animations run smoothly during gesture transitions."
+          }
+        ]
+      },
+      {
+        "id": 45,
+        "title": "Create equipment data models and state management",
+        "description": "Implement the data models for equipment items and canvas state as specified in the PRD, along with state management using Context API.",
+        "details": "1. Create TypeScript interfaces for equipment data models:\n```typescript\ninterface Equipment {\n  id: string;\n  name: string;\n  category: EquipmentCategory;\n  shape: EquipmentShape;\n  dimensions: EquipmentDimensions;\n  specifications: EquipmentSpecs;\n  touchTargetSize: { width: number; height: number };\n  snapPoints: { x: number; y: number }[];\n  clearanceZone: number;\n  thumbnail: string;\n}\n```\n2. Implement canvas state model:\n```typescript\ninterface CanvasState {\n  transform: Transform;\n  selectedItems: Set<string>;\n  activeGesture: GestureType | null;\n  touchHistory: TouchEvent[];\n  snapTargets: SnapTarget[];\n  measurements: Measurement[];\n}\n```\n3. Set up Context API providers for equipment and canvas state\n4. Implement reducers for state management\n5. Create custom hooks for accessing and updating state\n6. Set up efficient state updates to maintain 60fps performance",
+        "testStrategy": "1. Unit test data models and state management\n2. Verify state updates don't cause unnecessary re-renders\n3. Test performance with large numbers of equipment items\n4. Validate type safety with TypeScript compiler\n5. Test state persistence and restoration",
+        "priority": "high",
+        "dependencies": [
+          41,
+          43
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define TypeScript interfaces for equipment data models",
+            "description": "Create comprehensive TypeScript interfaces for all equipment-related data models including Equipment, EquipmentCategory, EquipmentShape, EquipmentDimensions, and EquipmentSpecs.",
+            "dependencies": [],
+            "details": "Create a models/equipment.ts file with the following interfaces:\n- Equipment (as specified in the task)\n- EquipmentCategory (enum with categories like 'ride', 'game', 'food', 'service', etc.)\n- EquipmentShape (enum with shapes like 'rectangle', 'circle', 'polygon', etc.)\n- EquipmentDimensions (interface with width, height, depth properties)\n- EquipmentSpecs (interface with properties like power requirements, weight, capacity, etc.)\n\nEnsure all types are properly exported and documented with JSDoc comments.",
+            "status": "pending",
+            "testStrategy": "Validate type definitions with TypeScript compiler. Create sample objects of each type to verify structure."
+          },
+          {
+            "id": 2,
+            "title": "Implement canvas state and gesture models",
+            "description": "Define TypeScript interfaces for canvas state, transform, gestures, touch events, snap targets, and measurements.",
+            "dependencies": [],
+            "details": "Create a models/canvas.ts file with the following interfaces:\n- CanvasState (as specified in the task)\n- Transform (interface with properties for scale, translate, rotate)\n- GestureType (enum with values like 'pan', 'pinch', 'rotate', etc.)\n- TouchEvent (interface for tracking touch positions and timestamps)\n- SnapTarget (interface defining snap points and behavior)\n- Measurement (interface for storing distance/area measurements)\n\nEnsure all interfaces are properly typed and exported.",
+            "status": "pending",
+            "testStrategy": "Verify type definitions with TypeScript compiler. Create mock instances to validate structure."
+          },
+          {
+            "id": 3,
+            "title": "Create equipment context provider",
+            "description": "Implement a React Context provider for equipment state management that will store the equipment library and placed equipment items.",
+            "dependencies": [
+              "45.1"
+            ],
+            "details": "Create context/EquipmentContext.tsx with:\n- EquipmentContextState interface (containing equipmentLibrary and placedEquipment)\n- Initial state with empty arrays/objects\n- EquipmentContext using React.createContext\n- EquipmentProvider component that wraps children with the context provider\n- Implement basic CRUD operations for equipment management\n- Export useEquipment custom hook for consuming components",
+            "status": "pending",
+            "testStrategy": "Unit test the provider with React Testing Library. Verify state updates correctly propagate to consumers."
+          },
+          {
+            "id": 4,
+            "title": "Implement canvas context provider",
+            "description": "Create a React Context provider for canvas state management including transform, selection, gestures, and measurements.",
+            "dependencies": [
+              "45.2"
+            ],
+            "details": "Create context/CanvasContext.tsx with:\n- CanvasContextState interface extending the CanvasState\n- Initial state with default values\n- CanvasContext using React.createContext\n- CanvasProvider component with state management\n- Implement methods for updating transform, selection, gestures\n- Create utility functions for common operations\n- Export useCanvas custom hook for consuming components",
+            "status": "pending",
+            "testStrategy": "Test the provider with React Testing Library. Verify transform operations and selection management work correctly."
+          },
+          {
+            "id": 5,
+            "title": "Develop state reducers for equipment management",
+            "description": "Create reducer functions to handle equipment state updates in an immutable way, ensuring efficient rendering.",
+            "dependencies": [
+              "45.3"
+            ],
+            "details": "In reducers/equipmentReducers.ts:\n- Create action types for equipment operations (ADD, UPDATE, DELETE, etc.)\n- Implement reducer functions that handle each action type\n- Ensure immutable state updates for React performance\n- Add type safety with TypeScript for all actions and state changes\n- Implement batch update capabilities for multiple operations\n- Add optimized functions for common equipment manipulations",
+            "status": "pending",
+            "testStrategy": "Unit test each reducer function with various inputs. Verify immutability of state updates."
+          },
+          {
+            "id": 6,
+            "title": "Develop state reducers for canvas operations",
+            "description": "Create reducer functions to handle canvas state updates including transform, selection, and gesture handling.",
+            "dependencies": [
+              "45.4"
+            ],
+            "details": "In reducers/canvasReducers.ts:\n- Create action types for canvas operations (ZOOM, PAN, SELECT, etc.)\n- Implement reducer functions for each action type\n- Ensure all state updates are immutable\n- Add performance optimizations for frequent updates (e.g., during gestures)\n- Implement debouncing for continuous operations\n- Create utility functions for common transform operations\n- Add type safety with TypeScript",
+            "status": "pending",
+            "testStrategy": "Unit test each reducer function. Benchmark performance with rapid state updates to ensure 60fps capability."
+          },
+          {
+            "id": 7,
+            "title": "Create custom hooks for state access and performance optimization",
+            "description": "Develop specialized custom hooks that provide optimized access to specific parts of the state to prevent unnecessary re-renders.",
+            "dependencies": [
+              "45.5",
+              "45.6"
+            ],
+            "details": "In hooks/stateHooks.ts:\n- Create useSelectedEquipment hook that only triggers re-renders when selection changes\n- Implement useEquipmentById hook for accessing specific equipment items\n- Create useCanvasTransform hook for transform-only updates\n- Implement useMeasurements hook for measurement operations\n- Add useSnapTargets hook for snap functionality\n- Create memoized selectors for derived state\n- Implement performance monitoring in development mode\n- Add TypeScript type safety for all hooks",
+            "status": "pending",
+            "testStrategy": "Test hooks in isolation and in components. Verify re-render behavior with React DevTools profiler. Ensure components only re-render when necessary."
+          }
+        ]
+      },
+      {
+        "id": 46,
+        "title": "Implement equipment library with drag-and-drop functionality",
+        "description": "Create a touch-optimized equipment library with drag-and-drop functionality for placing items on the canvas.",
+        "details": "1. Design and implement equipment library UI with large thumbnails\n2. Create category navigation system\n3. Implement equipment search with predictive input\n4. Set up filtering by equipment type and specifications\n5. Implement drag-and-drop using React-DnD:\n   - Configure drag sources for equipment items\n   - Set up drop targets on canvas\n   - Handle drag preview rendering\n6. Create recently used and favorites sections\n7. Implement custom equipment creation flow\n8. Add expandable info panels with equipment specifications\n9. Ensure all interactions have 44pt minimum touch targets",
+        "testStrategy": "1. Test drag-and-drop functionality on actual iPad devices\n2. Verify search and filtering functionality\n3. Test recently used and favorites functionality\n4. Validate custom equipment creation flow\n5. Measure performance during drag operations",
+        "priority": "high",
+        "dependencies": [
+          42,
+          44,
+          45
+        ],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement equipment library UI with thumbnails",
+            "description": "Create a responsive UI layout for the equipment library with large thumbnails optimized for touch interaction. Include a grid view with appropriate spacing and visual hierarchy.",
+            "dependencies": [],
+            "details": "Use React components to create a responsive grid layout. Implement large thumbnails (minimum 120x120px) with equipment names. Ensure touch targets are at least 44pt. Use CSS Grid or Flexbox for the layout with appropriate padding and margins. Include placeholder states for loading and empty states.",
+            "status": "done",
+            "testStrategy": "Test UI rendering on different screen sizes. Verify touch targets meet minimum size requirements. Test with various thumbnail image sizes and aspect ratios."
+          },
+          {
+            "id": 2,
+            "title": "Implement category navigation and filtering system",
+            "description": "Create a category-based navigation system with filtering capabilities to allow users to browse and filter equipment by type and specifications.",
+            "dependencies": [
+              "46.1"
+            ],
+            "details": "Implement a horizontal scrollable category bar at the top of the library. Create filter components for equipment specifications (size, power requirements, etc.). Use React context or Redux to manage filter state. Implement filter chips to show active filters with the ability to remove them. Add visual indicators for active categories and filters.",
+            "status": "pending",
+            "testStrategy": "Test category navigation with touch gestures. Verify filters correctly limit displayed equipment. Test combinations of multiple filters. Verify filter state persistence when navigating between categories."
+          },
+          {
+            "id": 3,
+            "title": "Implement equipment search with predictive input",
+            "description": "Create a search functionality with predictive text input to allow users to quickly find specific equipment items by name or attributes.",
+            "dependencies": [
+              "46.1"
+            ],
+            "details": "Implement a search input field with debounced input handling. Create a predictive text algorithm that suggests equipment names as the user types. Display search results in real-time with highlighted matching text. Implement search history storage for quick access to previous searches. Add clear button and keyboard dismiss actions for touch interfaces.",
+            "status": "pending",
+            "testStrategy": "Test search with partial text inputs. Verify predictive suggestions appear correctly. Test search performance with large equipment libraries. Verify touch keyboard interactions work properly."
+          },
+          {
+            "id": 4,
+            "title": "Implement drag-and-drop using React-DnD",
+            "description": "Set up drag-and-drop functionality using React-DnD to allow users to drag equipment items from the library and drop them onto the canvas.",
+            "dependencies": [
+              "46.1"
+            ],
+            "details": "Configure React-DnD with touch backend support. Implement drag sources for equipment items with appropriate preview rendering. Set up drop targets on the canvas with highlight indicators. Handle drop events to place equipment at the correct position. Implement custom drag previews that match the actual equipment appearance. Add haptic feedback for drag start and successful drops.",
+            "status": "pending",
+            "testStrategy": "Test drag-and-drop on actual touch devices. Verify drag preview renders correctly. Test performance during drag operations. Validate drop positioning accuracy. Test with different equipment sizes and types."
+          },
+          {
+            "id": 5,
+            "title": "Create recently used and favorites sections",
+            "description": "Implement recently used and favorites sections in the equipment library to provide quick access to frequently used items.",
+            "dependencies": [
+              "46.1",
+              "46.4"
+            ],
+            "details": "Create a persistent storage system for recently used items and favorites. Implement a horizontal scrollable section at the top of the library for these items. Add favorite toggle functionality with star icon and appropriate touch area. Limit recently used items to the last 20 used. Implement drag-and-drop from these sections. Add clear functionality for recently used items.",
+            "status": "done",
+            "testStrategy": "Verify recently used items update after drag operations. Test favorites persistence across sessions. Test drag-and-drop from these sections. Verify touch interactions for favoriting items."
+          },
+          {
+            "id": 6,
+            "title": "Implement custom equipment creation flow",
+            "description": "Create a workflow for users to define and add custom equipment items to the library with appropriate properties and appearance.",
+            "dependencies": [
+              "46.1",
+              "46.2"
+            ],
+            "details": "Design a multi-step form for custom equipment creation. Include fields for dimensions, name, category, and specifications. Implement image upload or basic shape selection for appearance. Create validation for required fields. Add preview of the custom equipment. Implement save functionality to add to the library. Create edit capability for existing custom equipment.",
+            "status": "pending",
+            "testStrategy": "Test the complete custom equipment creation flow. Verify validation works correctly. Test image upload functionality. Verify custom equipment appears correctly in the library and can be dragged to canvas."
+          },
+          {
+            "id": 7,
+            "title": "Add expandable info panels with equipment specifications",
+            "description": "Implement expandable information panels that show detailed equipment specifications and usage information when an item is selected.",
+            "dependencies": [
+              "46.1"
+            ],
+            "details": "Create a slide-up panel component that appears when an equipment item is tapped. Display comprehensive specifications including dimensions, power requirements, and other relevant details. Add tabbed navigation for different information categories (specs, usage notes, etc.). Implement expand/collapse animations. Include equipment documentation links where available.",
+            "status": "pending",
+            "testStrategy": "Test panel expansion and collapse interactions. Verify all specification data displays correctly. Test on different screen sizes to ensure proper layout. Verify touch interactions work correctly for navigating between tabs."
+          },
+          {
+            "id": 8,
+            "title": "Optimize touch interactions and performance",
+            "description": "Ensure all library interactions are optimized for touch with appropriate gestures, animations, and performance optimizations.",
+            "dependencies": [
+              "46.1",
+              "46.2",
+              "46.3",
+              "46.4",
+              "46.5",
+              "46.6",
+              "46.7"
+            ],
+            "details": "Implement smooth animations for all interactions with appropriate timing. Add gesture support for common actions (swipe to favorite, long press for quick actions). Optimize rendering performance using virtualized lists for large equipment libraries. Implement image lazy loading and caching. Add skeleton loading states. Ensure all touch targets meet 44pt minimum size. Implement touch feedback (highlight states, haptics) for all interactive elements.",
+            "status": "pending",
+            "testStrategy": "Test performance with large equipment libraries (1000+ items). Measure and optimize frame rates during scrolling and animations. Test all touch gestures on actual devices. Verify memory usage remains stable during extended use."
+          }
+        ]
+      },
+      {
+        "id": 47,
+        "title": "Implement canvas equipment manipulation tools",
+        "description": "Create tools for manipulating equipment on the canvas, including selection, movement, rotation, and bulk operations.",
+        "details": "1. Implement selection tools:\n   - Single-item selection\n   - Multi-select with lasso and rectangle tools\n   - Selection indicators and handles\n2. Create movement tools:\n   - Drag to move selected items\n   - Arrow key nudging with keyboard\n   - Snap-to-grid and alignment guides\n3. Implement rotation tools:\n   - In-place rotation with touch gestures\n   - Angle snapping (15°, 45°, 90°)\n   - Rotation handles\n4. Add bulk operations:\n   - Move multiple items\n   - Rotate multiple items\n   - Delete multiple items\n5. Implement layering system:\n   - Bring to front/send to back\n   - Visual indicators for layer position\n6. Add duplication functionality:\n   - Touch-and-drag to duplicate\n   - Copy/paste with keyboard shortcuts\n7. Implement grouping:\n   - Create equipment groups\n   - Manipulate groups as single units\n8. Add alignment tools:\n   - Smart guides\n   - Automatic alignment\n<info added on 2025-07-29T18:57:46.529Z>\n9. UI Implementation Guidelines:\n   - Follow the user-provided wireframe screenshots for layout and structure\n   - Maintain the component hierarchy shown in wireframes\n   - Implement sidebar navigation as depicted in wireframes\n   - Structure canvas workspace according to wireframe specifications\n   - Arrange tool panels as shown in wireframes\n   - Elevate visual design beyond wireframes with a more polished, professional appearance\n   - Ensure consistent styling across all manipulation tools\n   - Maintain proper spacing and alignment between UI elements as indicated\n</info added on 2025-07-29T18:57:46.529Z>",
+        "testStrategy": "1. Test all manipulation tools on actual iPad devices\n2. Verify selection tools work with touch and Apple Pencil\n3. Validate snap-to-grid and alignment functionality\n4. Test bulk operations with large numbers of items\n5. Verify grouping and ungrouping functionality",
+        "priority": "high",
+        "dependencies": [
+          43,
+          44,
+          45
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement single and multi-selection tools",
+            "description": "Create selection tools that allow users to select single items with tap/click and multiple items using lasso and rectangle selection tools. Include visual indicators for selected items.",
+            "dependencies": [],
+            "details": "Implement touch event handlers for single-tap selection. Create rectangle selection by tracking touch start and end points to form a bounding box. Implement lasso selection using a path-drawing approach that captures all points during a touch-drag operation. Add visual indicators (handles, highlight borders) for selected items. Ensure selection state is tracked in a central store for other tools to access.",
+            "status": "pending",
+            "testStrategy": "Test single selection on various equipment types. Verify rectangle selection captures all items within bounds. Test lasso selection with complex paths. Validate selection indicators appear correctly on all selected items."
+          },
+          {
+            "id": 2,
+            "title": "Create movement tools for selected items",
+            "description": "Implement functionality to move selected items via touch drag, keyboard arrow keys, and with snap-to-grid and alignment guides.",
+            "dependencies": [
+              "47.1"
+            ],
+            "details": "Add drag handlers to selected items that update position based on touch movement. Implement keyboard event listeners for arrow key nudging with configurable distance. Create a snap-to-grid system with customizable grid size and toggle option. Develop alignment guides that appear when items are near each other to assist with precise positioning. Store original positions to support undo operations.",
+            "status": "pending",
+            "testStrategy": "Test drag movement with single and multiple items. Verify arrow key nudging works with different key combinations. Test snap-to-grid at various grid sizes. Validate alignment guides appear at appropriate times and positions."
+          },
+          {
+            "id": 3,
+            "title": "Implement rotation tools with gestures and handles",
+            "description": "Create rotation functionality for equipment items using touch gestures, rotation handles, and angle snapping options.",
+            "dependencies": [
+              "47.1"
+            ],
+            "details": "Add rotation handles to selected items. Implement two-finger rotation gesture recognition. Calculate rotation angle based on gesture movement relative to item center. Add angle snapping functionality for 15°, 45°, and 90° increments with visual indicators. Create a rotation mode toggle in the toolbar. Ensure rotation preserves item position and applies transformations correctly.",
+            "status": "pending",
+            "testStrategy": "Test rotation handles for accurate angle changes. Verify two-finger gestures rotate items smoothly. Test angle snapping at each increment setting. Validate rotation of multiple selected items maintains relative positioning."
+          },
+          {
+            "id": 4,
+            "title": "Develop bulk operations for multiple items",
+            "description": "Implement functionality to perform operations on multiple selected items simultaneously, including movement, rotation, and deletion.",
+            "dependencies": [
+              "47.1",
+              "47.2",
+              "47.3"
+            ],
+            "details": "Extend movement and rotation tools to work with multiple selections. Calculate group center for rotation operations. Implement batch deletion with confirmation dialog for multiple items. Add visual feedback during bulk operations. Create a selection count indicator in the UI. Ensure all bulk operations can be undone as a single action.",
+            "status": "pending",
+            "testStrategy": "Test bulk movement with various item combinations. Verify bulk rotation around group center works correctly. Test bulk deletion with confirmation. Validate undo functionality restores all items properly."
+          },
+          {
+            "id": 5,
+            "title": "Implement layering system for z-index control",
+            "description": "Create a layering system that allows users to control the z-index of items with bring to front, send to back, and layer position indicators.",
+            "dependencies": [
+              "47.1"
+            ],
+            "details": "Implement z-index tracking for all canvas items. Add layer controls in the toolbar for selected items: bring to front, send to back, bring forward, send backward. Create visual indicators showing relative layer position when items are selected. Ensure layer changes are reflected immediately in the rendering order. Store layer information for persistence.",
+            "status": "pending",
+            "testStrategy": "Test each layer control with overlapping items. Verify visual indicators correctly show layer position. Test layer operations with multiple selected items. Validate layer persistence when saving and loading projects."
+          },
+          {
+            "id": 6,
+            "title": "Add duplication functionality with gestures and shortcuts",
+            "description": "Implement item duplication using touch gestures and keyboard shortcuts, allowing users to quickly create copies of equipment items.",
+            "dependencies": [
+              "47.1",
+              "47.2"
+            ],
+            "details": "Create touch-and-drag duplication gesture (hold item, then drag with second finger). Implement keyboard shortcuts (Cmd+D, Ctrl+D) for duplication. Add duplicate button in the selection context menu. Ensure duplicated items maintain properties but have unique identifiers. Position duplicates with slight offset for visibility. Support duplication of multiple selected items.",
+            "status": "pending",
+            "testStrategy": "Test touch gesture duplication on various devices. Verify keyboard shortcuts create proper duplicates. Test duplication of multiple selected items. Validate duplicated items maintain all properties and can be manipulated independently."
+          },
+          {
+            "id": 7,
+            "title": "Implement grouping functionality for equipment items",
+            "description": "Create tools to group multiple equipment items together, allowing them to be manipulated as a single unit while maintaining individual properties.",
+            "dependencies": [
+              "47.1",
+              "47.4"
+            ],
+            "details": "Add group/ungroup buttons in the toolbar. Implement data structure to track group membership while preserving individual items. Create visual indication of grouped items (group boundary). Ensure all manipulation tools (move, rotate, delete) work with groups as single units. Allow selecting individual items within a group with modifier key. Support nested groups with proper hierarchy.",
+            "status": "pending",
+            "testStrategy": "Test group creation with various item combinations. Verify all manipulation tools work correctly with groups. Test selecting individual items within groups. Validate nested groups maintain proper hierarchy during operations."
+          },
+          {
+            "id": 8,
+            "title": "Create alignment tools with smart guides",
+            "description": "Implement alignment tools including smart guides that appear automatically during movement and manual alignment options for precise positioning.",
+            "dependencies": [
+              "47.2",
+              "47.4"
+            ],
+            "details": "Develop smart guides that appear when items are aligned with others (centers, edges, equal spacing). Create alignment buttons in the toolbar for selected items (align left, right, top, bottom, center). Implement distribution options for equal spacing between multiple items. Add visual indicators for alignment operations. Ensure alignment tools work with both individual items and groups.",
+            "status": "pending",
+            "testStrategy": "Test smart guides appear at correct positions during movement. Verify each alignment button correctly positions items. Test distribution with various numbers of items. Validate alignment tools work with both individual items and groups."
+          }
+        ]
+      },
+      {
+        "id": 48,
+        "title": "Implement measurement tools and calibration system",
+        "description": "Create touch-optimized measurement tools with real-world calibration capabilities.",
+        "details": "1. Implement basic measurement tools:\n   - Distance measurement\n   - Area measurement\n   - Angle measurement\n2. Create touch-optimized controls with large, finger-friendly handles\n3. Implement precision mode with long-press activation\n4. Add real-world calibration system:\n   - Scale calibration using known distances\n   - Visual calibration guides\n5. Support multiple units (feet, meters, yards)\n6. Implement measurement history and persistent annotations\n7. Add visual feedback with real-time measurement display\n8. Implement haptic feedback simulation for measurement actions",
+        "testStrategy": "1. Test measurement accuracy with known distances\n2. Verify calibration system produces correct real-world measurements\n3. Test unit conversion functionality\n4. Validate touch controls on actual iPad devices\n5. Test precision mode with Apple Pencil",
+        "priority": "medium",
+        "dependencies": [
+          43,
+          44
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement distance measurement tool",
+            "description": "Create a touch-optimized distance measurement tool that allows users to measure straight-line distances between two points on the canvas.",
+            "dependencies": [],
+            "details": "Implement a distance measurement tool that: 1) Activates when selected from the toolbar, 2) Allows users to tap two points on the canvas to create a measurement line, 3) Displays the distance in real-time as the second point is being positioned, 4) Creates draggable endpoints with large touch targets, 5) Renders the measurement line with appropriate styling and labels.",
+            "status": "in-progress",
+            "testStrategy": "Test accuracy of distance calculations, verify touch interaction works on different device sizes, ensure measurement line renders correctly at different zoom levels."
+          },
+          {
+            "id": 2,
+            "title": "Implement area and angle measurement tools",
+            "description": "Create area measurement (polygon/rectangle) and angle measurement tools with touch-optimized controls.",
+            "dependencies": [
+              "48.1"
+            ],
+            "details": "Build on the distance tool architecture to implement: 1) Area measurement with polygon or rectangle modes, allowing multiple points to define an enclosed area, 2) Angle measurement tool that captures three points to define an angle, 3) Real-time calculation and display of measurements as points are adjusted, 4) Touch-friendly handles for all control points, 5) Visual indicators showing the measured area or angle.",
+            "status": "pending",
+            "testStrategy": "Verify area calculations for different shapes, test angle measurements against known angles, ensure multi-point interactions work smoothly on touch devices."
+          },
+          {
+            "id": 3,
+            "title": "Implement precision mode and touch optimization",
+            "description": "Create a precision mode activated by long-press and optimize all measurement tools for touch interaction.",
+            "dependencies": [
+              "48.1",
+              "48.2"
+            ],
+            "details": "Implement: 1) Long-press activation for precision mode that zooms in and allows fine-grained control, 2) Larger touch targets for all measurement control points (minimum 44x44 points), 3) Visual feedback when touch targets are selected, 4) Smooth dragging behavior for repositioning measurement points, 5) Support for Apple Pencil with enhanced precision when detected.",
+            "status": "pending",
+            "testStrategy": "Test long-press activation timing, verify touch target sizes meet accessibility standards, test dragging behavior on different devices, validate Apple Pencil precision enhancement."
+          },
+          {
+            "id": 4,
+            "title": "Implement real-world calibration system",
+            "description": "Create a calibration system that allows users to set real-world scale using known distances.",
+            "dependencies": [
+              "48.1",
+              "48.2"
+            ],
+            "details": "Develop a calibration system that: 1) Provides a UI for users to draw a line representing a known distance, 2) Allows input of the real-world length and unit, 3) Calculates and stores the pixel-to-real-world ratio, 4) Applies this calibration to all measurements, 5) Includes visual guides and instructions for accurate calibration, 6) Persists calibration settings per project.",
+            "status": "pending",
+            "testStrategy": "Test calibration with various known distances, verify measurements update correctly after calibration, test persistence of calibration settings between sessions."
+          },
+          {
+            "id": 5,
+            "title": "Implement unit conversion system",
+            "description": "Create a system for converting and displaying measurements in multiple units (feet, meters, yards, etc.).",
+            "dependencies": [
+              "48.4"
+            ],
+            "details": "Implement: 1) Support for multiple measurement units including feet, meters, yards, inches, and centimeters, 2) User interface for selecting preferred units, 3) Real-time conversion and display of measurements in the selected unit, 4) Proper formatting of units with appropriate precision, 5) Ability to switch units for existing measurements, 6) Default unit preferences stored per user.",
+            "status": "pending",
+            "testStrategy": "Verify conversion accuracy between different units, test unit switching UI, validate formatting of different units, ensure preferences are correctly persisted."
+          },
+          {
+            "id": 6,
+            "title": "Implement measurement history and annotations",
+            "description": "Create a system for storing measurement history and adding persistent annotations to measurements.",
+            "dependencies": [
+              "48.1",
+              "48.2",
+              "48.5"
+            ],
+            "details": "Develop: 1) A measurement history panel showing recent measurements with timestamps, 2) Ability to add text annotations to any measurement, 3) Persistent storage of measurements and annotations, 4) Options to hide/show specific measurements, 5) Functionality to export measurement data, 6) Color coding options for different measurement types.",
+            "status": "pending",
+            "testStrategy": "Test persistence of measurement history across sessions, verify annotations display correctly, test export functionality, validate hide/show behavior."
+          },
+          {
+            "id": 7,
+            "title": "Implement real-time measurement display",
+            "description": "Create a dynamic display system that shows measurements in real-time as users interact with measurement tools.",
+            "dependencies": [
+              "48.1",
+              "48.2",
+              "48.5"
+            ],
+            "details": "Implement: 1) Real-time display of current measurement values during tool use, 2) Floating measurement labels that position intelligently to avoid obstruction, 3) Temporary measurement preview when hovering or moving points, 4) Clear visual distinction between in-progress and completed measurements, 5) Animation for measurement updates when values change.",
+            "status": "pending",
+            "testStrategy": "Test real-time updates during interaction, verify label positioning at different zoom levels, test visibility of measurement text against various backgrounds."
+          },
+          {
+            "id": 8,
+            "title": "Implement haptic feedback and final integration",
+            "description": "Add haptic feedback for measurement actions and integrate all measurement components into a cohesive system.",
+            "dependencies": [
+              "48.1",
+              "48.2",
+              "48.3",
+              "48.4",
+              "48.5",
+              "48.6",
+              "48.7"
+            ],
+            "details": "Complete the measurement system by: 1) Adding haptic feedback for key actions (placing points, completing measurements, etc.), 2) Integrating all measurement tools into a unified interface, 3) Creating consistent visual styling across all measurement types, 4) Implementing final performance optimizations for smooth operation, 5) Adding keyboard shortcuts for measurement tools, 6) Ensuring all measurement components work together seamlessly.",
+            "status": "pending",
+            "testStrategy": "Perform end-to-end testing of the complete measurement system, verify haptic feedback on supported devices, test keyboard shortcuts, validate performance with multiple measurements active."
+          }
+        ]
+      },
+      {
+        "id": 49,
+        "title": "Implement project save/load with IndexedDB",
+        "description": "Create a system for saving and loading projects using IndexedDB for offline storage.",
+        "details": "1. Set up IndexedDB schema for project storage\n2. Implement project saving functionality:\n   - Auto-save at regular intervals\n   - Manual save option\n   - Save metadata (name, date, thumbnail)\n3. Create project loading system:\n   - Project browser with thumbnails\n   - Sort and filter options\n   - Search functionality\n4. Implement project versioning and history\n5. Add project metadata editing\n6. Implement project deletion and archiving\n7. Create export functionality for project sharing\n8. Add import capability for received projects",
+        "testStrategy": "1. Test saving and loading large projects\n2. Verify auto-save functionality works reliably\n3. Test project versioning and history\n4. Validate export and import functionality\n5. Test with simulated offline conditions",
+        "priority": "high",
+        "dependencies": [
+          45
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up IndexedDB database and schema",
+            "description": "Initialize the IndexedDB database with appropriate schema for project storage including tables for project metadata, content, and version history.",
+            "dependencies": [],
+            "details": "Create a database service that handles the initialization of IndexedDB. Define object stores for 'projects' (storing project data), 'metadata' (storing name, date, thumbnail), and 'versions' (for history tracking). Include appropriate indices for searching and filtering projects. Implement error handling for browser compatibility issues.",
+            "status": "pending",
+            "testStrategy": "Test database creation and schema setup across different browsers. Verify indices are correctly created for efficient querying."
+          },
+          {
+            "id": 2,
+            "title": "Implement project data serialization and deserialization",
+            "description": "Create utility functions to convert project data structures to/from a format suitable for IndexedDB storage.",
+            "dependencies": [
+              "49.1"
+            ],
+            "details": "Develop serialization functions that convert complex project objects (including canvas elements, properties, and relationships) into JSON-compatible format. Create corresponding deserialization functions to reconstruct project objects from stored data. Handle circular references and complex data types. Include versioning information in the serialized data for future compatibility.",
+            "status": "pending",
+            "testStrategy": "Test with various project complexities. Verify that all object properties are correctly preserved during serialization/deserialization cycles."
+          },
+          {
+            "id": 3,
+            "title": "Implement auto-save functionality",
+            "description": "Create a system that automatically saves project changes at regular intervals.",
+            "dependencies": [
+              "49.1",
+              "49.2"
+            ],
+            "details": "Implement a timer-based auto-save system that triggers every 30 seconds of user inactivity or after significant changes. Create a change detection mechanism to identify when projects have been modified. Implement throttling to prevent excessive saves during rapid changes. Add visual indicators to show save status (saving, saved, error).",
+            "status": "pending",
+            "testStrategy": "Test auto-save triggers with various user interaction patterns. Verify save operations don't impact UI responsiveness. Test recovery from auto-saved data after simulated crashes."
+          },
+          {
+            "id": 4,
+            "title": "Create manual save functionality with metadata editing",
+            "description": "Implement UI and logic for manual project saving with the ability to edit project metadata.",
+            "dependencies": [
+              "49.2",
+              "49.3"
+            ],
+            "details": "Create a save dialog interface allowing users to specify project name, add tags, and optionally generate/select a thumbnail. Implement form validation for required fields. Add the ability to overwrite existing projects or save as new versions. Generate automatic thumbnails of the current project state if user doesn't provide one.",
+            "status": "pending",
+            "testStrategy": "Test form validation for required fields. Verify thumbnail generation works correctly. Test overwrite protection and confirmation dialogs."
+          },
+          {
+            "id": 5,
+            "title": "Develop project browser with filtering and search",
+            "description": "Create a UI component for browsing, searching, and filtering saved projects.",
+            "dependencies": [
+              "49.1",
+              "49.2"
+            ],
+            "details": "Implement a grid/list view of saved projects showing thumbnails, names, and last modified dates. Add sorting options (by name, date, size). Implement filtering by tags or other metadata. Create a search function that queries project names and metadata. Include pagination for efficient loading of large project collections.",
+            "status": "pending",
+            "testStrategy": "Test search and filter performance with large numbers of projects. Verify sorting works correctly. Test pagination navigation and loading states."
+          },
+          {
+            "id": 6,
+            "title": "Implement project versioning and history tracking",
+            "description": "Create a system to track project versions and allow viewing/restoring previous versions.",
+            "dependencies": [
+              "49.2",
+              "49.3",
+              "49.4"
+            ],
+            "details": "Implement version tracking that saves incremental project states. Create a version browser UI showing timeline of changes with timestamps and version notes. Add functionality to view and restore previous versions. Implement storage optimization to save only changes between versions rather than complete copies.",
+            "status": "pending",
+            "testStrategy": "Test version restoration accuracy. Verify storage efficiency with incremental versioning. Test with projects having extensive edit histories."
+          },
+          {
+            "id": 7,
+            "title": "Implement project deletion and archiving",
+            "description": "Add functionality to delete projects or archive them for later access.",
+            "dependencies": [
+              "49.5"
+            ],
+            "details": "Create UI for project deletion with confirmation dialogs and safety measures. Implement soft-delete (archiving) functionality that hides projects without permanently removing them. Add batch operations for deleting/archiving multiple projects. Implement a trash/archive view with restoration capabilities. Add automatic cleanup of very old archived projects with user confirmation.",
+            "status": "pending",
+            "testStrategy": "Test deletion confirmation flows. Verify archived projects can be restored correctly. Test batch operations with multiple selected projects."
+          },
+          {
+            "id": 8,
+            "title": "Create project export and import functionality",
+            "description": "Implement features to export projects for sharing and import projects received from others.",
+            "dependencies": [
+              "49.2",
+              "49.4"
+            ],
+            "details": "Create export functionality that packages project data into a portable format (JSON file with optional embedded resources). Implement import capability to load projects from exported files. Add validation of imported data for security and integrity. Include progress indicators for large imports/exports. Support batch export/import of multiple projects.",
+            "status": "pending",
+            "testStrategy": "Test export/import with various project sizes and complexities. Verify imported projects maintain all properties and relationships. Test with malformed import files to ensure proper error handling."
+          }
+        ]
+      },
+      {
+        "id": 50,
+        "title": "Implement Supabase integration for backend storage",
+        "description": "Set up Supabase integration for cloud storage, real-time collaboration, and user authentication.",
+        "details": "1. Set up Supabase project and configure API\n2. Create database schema with PostgreSQL + PostGIS\n3. Implement authentication system (deferred security implementation)\n4. Set up Supabase Storage for images and projects\n5. Implement data synchronization between IndexedDB and Supabase\n6. Create conflict resolution system for offline changes\n7. Set up background sync for offline-first functionality\n8. Implement error handling and retry mechanisms\n9. Add user management and project permissions",
+        "testStrategy": "1. Test data synchronization with simulated network conditions\n2. Verify conflict resolution works correctly\n3. Test background sync functionality\n4. Validate error handling and recovery\n5. Test with multiple user accounts",
+        "priority": "medium",
+        "dependencies": [
+          49
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 51,
+        "title": "Implement real-time collaboration system",
+        "description": "Create a real-time collaboration system using Supabase Realtime for live multi-user editing.",
+        "details": "1. Set up Supabase Realtime channels for project collaboration\n2. Implement operational transformation for conflict-free editing\n3. Create user cursor visualization system\n4. Add text annotations for collaborative notes\n5. Implement change history with user attribution\n6. Create conflict resolution UI for manual merging\n7. Add role-based permissions system:\n   - View-only access\n   - Edit access\n   - Admin access\n8. Implement presence indicators for online users\n9. Add collaboration invitation system",
+        "testStrategy": "1. Test real-time editing with multiple simultaneous users\n2. Verify conflict resolution works correctly\n3. Test role-based permissions\n4. Validate change history and attribution\n5. Test with simulated network conditions",
+        "priority": "medium",
+        "dependencies": [
+          50
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Supabase Realtime channels for project collaboration",
+            "description": "Configure Supabase Realtime channels to enable real-time communication between users working on the same project. This includes setting up channel subscriptions, handling connection events, and implementing basic message broadcasting.",
+            "dependencies": [],
+            "details": "1. Initialize Supabase client with Realtime enabled\n2. Create a channel subscription system based on project IDs\n3. Implement connection/disconnection handlers\n4. Set up message broadcasting structure\n5. Create reconnection logic with exponential backoff\n6. Add channel presence functionality\n7. Implement error handling for channel operations",
+            "status": "pending",
+            "testStrategy": "Test channel connection with multiple clients, verify message delivery between clients, simulate network interruptions to test reconnection logic"
+          },
+          {
+            "id": 2,
+            "title": "Implement operational transformation for conflict-free editing",
+            "description": "Create an operational transformation system that allows multiple users to edit the same document simultaneously without conflicts. This includes defining operations, implementing transformation functions, and managing operation history.",
+            "dependencies": [
+              "51.1"
+            ],
+            "details": "1. Define operation types (insert, delete, update)\n2. Implement operation creation and serialization\n3. Create transformation functions for each operation type\n4. Implement operation history tracking\n5. Add version vector for operation ordering\n6. Create operation composition for efficiency\n7. Implement operation application logic",
+            "status": "pending",
+            "testStrategy": "Test concurrent edits with simulated network delays, verify document consistency across clients after multiple operations, test edge cases like simultaneous edits at the same position"
+          },
+          {
+            "id": 3,
+            "title": "Create user cursor visualization system",
+            "description": "Implement a system to visualize other users' cursors and selections in real-time. This includes cursor position tracking, visual representation, and smooth animation of cursor movements.",
+            "dependencies": [
+              "51.1"
+            ],
+            "details": "1. Create cursor position tracking mechanism\n2. Implement cursor data broadcasting via Realtime channels\n3. Design cursor visual components with user identification\n4. Add selection visualization with semi-transparent highlighting\n5. Implement cursor animation for smooth transitions\n6. Create cursor cleanup for disconnected users\n7. Add cursor collision handling for overlapping positions",
+            "status": "pending",
+            "testStrategy": "Test cursor visibility with multiple users, verify cursor position accuracy, test cursor behavior during rapid movements, validate selection visualization"
+          },
+          {
+            "id": 4,
+            "title": "Implement presence indicators and online user system",
+            "description": "Create a system to show which users are currently online and actively working on a project. This includes user presence tracking, status indicators, and activity monitoring.",
+            "dependencies": [
+              "51.1"
+            ],
+            "details": "1. Implement Supabase Presence feature for online status tracking\n2. Create user avatar display system with status indicators\n3. Add user activity tracking (active, idle, away)\n4. Implement presence updates with debouncing\n5. Create presence history for recent collaborators\n6. Add user join/leave notifications\n7. Implement presence permissions based on project access",
+            "status": "pending",
+            "testStrategy": "Test presence updates with multiple users joining/leaving, verify status changes are reflected correctly, test presence persistence during page reloads"
+          },
+          {
+            "id": 5,
+            "title": "Implement change history with user attribution",
+            "description": "Create a system to track and display the history of changes made to a document, including who made each change and when. This includes storing change metadata, displaying history, and enabling navigation through past versions.",
+            "dependencies": [
+              "51.2"
+            ],
+            "details": "1. Design change history data structure with user attribution\n2. Implement change recording mechanism\n3. Create history navigation UI with timeline\n4. Add user filtering for history view\n5. Implement change grouping for related operations\n6. Create change details panel with diff visualization\n7. Add history export functionality",
+            "status": "pending",
+            "testStrategy": "Test history recording with multiple users making changes, verify attribution accuracy, test history navigation and version restoration"
+          },
+          {
+            "id": 6,
+            "title": "Create conflict resolution UI for manual merging",
+            "description": "Implement a user interface for resolving conflicts that cannot be automatically merged. This includes conflict detection, visualization of differences, and tools for manual resolution.",
+            "dependencies": [
+              "51.2",
+              "51.5"
+            ],
+            "details": "1. Implement conflict detection algorithm\n2. Create conflict notification system\n3. Design side-by-side diff visualization\n4. Implement resolution options (keep mine, keep theirs, merge)\n5. Add custom merge editor for manual resolution\n6. Create conflict resolution history\n7. Implement resolution broadcasting to other users",
+            "status": "pending",
+            "testStrategy": "Test conflict detection with simultaneous incompatible edits, verify diff visualization accuracy, test all resolution options, validate that resolved conflicts propagate correctly to all users"
+          },
+          {
+            "id": 7,
+            "title": "Add role-based permissions system",
+            "description": "Implement a permissions system that controls what actions users can perform based on their assigned roles. This includes defining roles, setting permissions, and enforcing access controls throughout the application.",
+            "dependencies": [
+              "51.1"
+            ],
+            "details": "1. Define role types (viewer, editor, admin)\n2. Implement role assignment and management UI\n3. Create permission checking middleware\n4. Add UI adaptation based on user permissions\n5. Implement invitation system with role specification\n6. Create role change notifications\n7. Add audit logging for permission changes",
+            "status": "pending",
+            "testStrategy": "Test access controls for each role type, verify UI adaptations based on permissions, test permission inheritance and overrides, validate that unauthorized actions are properly blocked"
+          }
+        ]
+      },
+      {
+        "id": 52,
+        "title": "Implement Apple Pencil support",
+        "description": "Add support for Apple Pencil input with sub-pixel precision for detailed work.",
+        "details": "1. Detect Apple Pencil input using Pointer events API\n2. Implement sub-pixel precision for Pencil input\n3. Create specialized tools for Pencil use:\n   - Precise measurement\n   - Detailed equipment placement\n   - Annotation and markup\n4. Add Pencil double-tap gesture support\n5. Implement pressure sensitivity simulation\n6. Create Pencil-specific UI elements and feedback\n7. Add palm rejection simulation",
+        "testStrategy": "1. Test Apple Pencil input on actual iPad Pro devices\n2. Verify sub-pixel precision for detailed work\n3. Test Pencil double-tap gesture\n4. Validate specialized Pencil tools\n5. Test palm rejection functionality",
+        "priority": "medium",
+        "dependencies": [
+          44,
+          47
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 53,
+        "title": "Implement satellite imagery integration",
+        "description": "Integrate satellite imagery as a background layer for planning on real-world locations.",
+        "details": "1. Research and select appropriate mapping API (Google Maps, Mapbox, etc.)\n2. Implement satellite imagery layer in canvas\n3. Create location search and selection UI\n4. Add image caching for offline use\n5. Implement image tiling for performance\n6. Create opacity and visibility controls\n7. Add image calibration for accurate measurements\n8. Implement image export with overlay",
+        "testStrategy": "1. Test satellite imagery loading and rendering\n2. Verify location search functionality\n3. Test image caching for offline use\n4. Validate calibration accuracy\n5. Test performance with large satellite images",
+        "priority": "medium",
+        "dependencies": [
+          43
+        ],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Research and select mapping API",
+            "description": "Evaluate different mapping APIs (Google Maps, Mapbox, Leaflet) based on satellite imagery quality, API limits, pricing, and offline capabilities. Select the most appropriate API for our needs.",
+            "dependencies": [],
+            "details": "Create a comparison matrix of at least 3 mapping APIs. Evaluate each on: image quality, coverage areas, API limits, pricing, offline capabilities, and integration complexity. Document findings and make a recommendation with justification. Set up developer accounts for the selected API and obtain necessary API keys.\n<info added on 2025-07-29T23:19:01.544Z>\nCOMPLETED: Comprehensive API research and evaluation completed. \n\nFINDINGS:\n- Evaluated Google Maps Static API, Mapbox Static Images API, and Leaflet + tile providers\n- Created detailed comparison matrix with 10 evaluation criteria\n- Conducted research on image quality, pricing, API limits, offline capabilities, scale metadata extraction, zoom levels, and iPad optimization\n\nRECOMMENDATION: Google Maps Static API selected as optimal choice because:\n1. PERFECT for automatic scale detection - direct zoom level to meters/pixel conversion\n2. Fastest implementation - single API endpoint, immediate integration\n3. iPad optimized - excellent Safari performance and PWA support\n4. Reliable global coverage - consistent quality worldwide\n5. Excellent documentation and community support\n\nDELIVERABLES:\n- Comprehensive research report saved to .taskmaster/docs/research/\n- API comparison matrix created at .taskmaster/docs/api-comparison-matrix.md\n- Technical implementation details and cost projections documented\n- Ready to proceed with Google Maps Static API integration\n\nNEXT STEP: Begin Task 53.2 - Implement satellite imagery layer in canvas using Google Maps Static API.\n</info added on 2025-07-29T23:19:01.544Z>",
+            "status": "done",
+            "testStrategy": "Create a simple proof-of-concept implementation with each API to verify satellite imagery quality and basic functionality before making final selection."
+          },
+          {
+            "id": 2,
+            "title": "Implement satellite imagery layer in canvas",
+            "description": "Integrate the selected mapping API to display satellite imagery as a background layer in the canvas component.",
+            "dependencies": [
+              "53.1"
+            ],
+            "details": "Create a new SatelliteImageryLayer class that interfaces with the selected mapping API. Implement methods to fetch and render satellite tiles at the correct coordinates and zoom level. Add event listeners to handle panning and zooming. Ensure the satellite imagery is properly positioned and scaled relative to the canvas coordinate system.\n<info added on 2025-07-29T23:40:15.915Z>\nCOMPLETED: Satellite imagery layer implementation in canvas completed successfully.\n\nIMPLEMENTATION DETAILS:\n- Created SatelliteImageryService class with Google Maps Static API integration\n- Implemented automatic scale detection using zoom level and latitude calculations\n- Added useSatelliteImagery hook for state management and coordinate conversion\n- Updated ImageDrawer with full satellite imagery functionality:\n  - Location search with Google Geocoding API\n  - Search results display with coordinates\n  - Zoom level controls (10-20)\n  - Real-time satellite image loading\n  - Automatic scale detection with confidence display\n  - Apply to Canvas functionality\n- Integrated satellite imagery into Canvas component:\n  - Background layer rendering with transparency\n  - Automatic canvas scale setting based on meters/pixel\n  - Proper coordinate transformations\n  - Error handling and loading states\n\nAUTOMATIC SCALE DETECTION FEATURES:\n- Calculates precise meters/pixel from zoom level and latitude\n- Formula: (earth_circumference * cos(latitude)) / (2^(zoom + 8))\n- Confidence scoring based on zoom level and location\n- Automatic canvas scale adjustment when image loads\n- Console logging of scale and confidence for verification\n\nTECHNICAL INTEGRATION:\n- Environment variable setup for Google Maps API key\n- Complete data flow from ImageDrawer → Main Page → Canvas\n- Proper TypeScript interfaces and error handling\n- Cross-origin image loading with proper error handling\n\nREADY FOR TESTING: Implementation complete and ready for testing with actual Google Maps API key.\n\nNEXT STEP: Test satellite imagery functionality and proceed to Task 53.3 - Location search UI enhancements.\n</info added on 2025-07-29T23:40:15.915Z>",
+            "status": "done",
+            "testStrategy": "Test satellite imagery loading and rendering at different zoom levels. Verify that panning and zooming work correctly with the satellite layer. Test with different locations to ensure global coverage."
+          },
+          {
+            "id": 3,
+            "title": "Create location search and selection UI",
+            "description": "Develop a user interface for searching locations and selecting areas to display as satellite imagery on the canvas.",
+            "dependencies": [
+              "53.2"
+            ],
+            "details": "Implement a search input field with autocomplete functionality using the mapping API's geocoding service. Create a results list that displays matching locations. Add a map preview component to show the selected area before adding it to the canvas. Implement a confirmation dialog with options for zoom level and area size. Update the canvas with the selected satellite imagery when confirmed.",
+            "status": "pending",
+            "testStrategy": "Test search functionality with various location types (cities, addresses, landmarks). Verify that search results are accurate and relevant. Test the preview and confirmation workflow to ensure selected areas are correctly displayed on the canvas."
+          },
+          {
+            "id": 4,
+            "title": "Implement image tiling and caching for performance",
+            "description": "Create a tiling system to load and display satellite imagery efficiently, with caching for offline use and performance optimization.",
+            "dependencies": [
+              "53.2"
+            ],
+            "details": "Implement a TileManager class to handle loading, caching, and rendering of satellite image tiles. Use a quadtree data structure to manage visible tiles based on the current viewport. Create a caching system using IndexedDB to store downloaded tiles for offline use. Implement a tile loading priority system based on viewport visibility. Add a background worker for tile processing to prevent UI blocking.",
+            "status": "pending",
+            "testStrategy": "Measure rendering performance with large satellite areas. Test memory usage during extended use. Verify that tiles are properly cached and can be accessed offline. Test tile loading priority to ensure visible areas load first."
+          },
+          {
+            "id": 5,
+            "title": "Add image calibration for accurate measurements",
+            "description": "Implement a calibration system to ensure accurate real-world measurements when using satellite imagery.",
+            "dependencies": [
+              "53.2",
+              "53.4"
+            ],
+            "details": "Create a CalibrationManager class to handle conversion between pixel coordinates and real-world coordinates (latitude/longitude). Implement methods to calculate distances and areas in real-world units (meters, feet, etc.). Add a calibration UI that allows users to set known distances between points. Create a coordinate system overlay that displays real-world coordinates. Implement automatic calibration using the mapping API's metadata when available.",
+            "status": "pending",
+            "testStrategy": "Verify measurement accuracy by comparing calculated distances with known real-world distances. Test calibration with different zoom levels and locations. Validate area calculations against known reference areas."
+          },
+          {
+            "id": 6,
+            "title": "Create opacity, visibility controls and image export",
+            "description": "Implement UI controls for adjusting satellite imagery appearance and functionality to export the canvas with satellite imagery overlay.",
+            "dependencies": [
+              "53.2",
+              "53.5"
+            ],
+            "details": "Create UI controls for adjusting satellite imagery opacity and visibility. Implement layer ordering to control whether satellite imagery appears above or below other canvas elements. Add image enhancement controls (brightness, contrast, saturation). Create an export system that captures the canvas with satellite imagery at the appropriate resolution. Implement options for including/excluding satellite imagery in exports. Add scale bars and north indicators for exported images with satellite backgrounds.",
+            "status": "pending",
+            "testStrategy": "Test opacity and visibility controls to ensure they work correctly. Verify that exported images maintain proper resolution and quality. Test scale bars and north indicators for accuracy. Validate that all canvas elements are correctly included in exports with satellite backgrounds."
+          }
+        ]
+      },
+      {
+        "id": 54,
+        "title": "Implement professional PDF export",
+        "description": "Create a system for generating high-quality PDF exports of layouts with scale bars and measurements.",
+        "details": "1. Research and select PDF generation library\n2. Implement PDF document creation\n3. Create layout templates for different paper sizes\n4. Add scale bar and measurement annotations\n5. Implement custom headers and footers\n6. Add project metadata and information\n7. Create export options UI\n8. Implement batch export for multiple layouts",
+        "testStrategy": "1. Test PDF generation with various layouts\n2. Verify scale accuracy in exported PDFs\n3. Test with different paper sizes and orientations\n4. Validate custom headers and footers\n5. Test batch export functionality",
+        "priority": "medium",
+        "dependencies": [
+          47,
+          48
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 55,
+        "title": "Implement native iOS integration features",
+        "description": "Add integration with native iOS features like Share Sheet, Files app, and system-wide search.",
+        "details": "1. Implement PWA features for home screen installation\n2. Create custom file type handlers for project files\n3. Implement Share Sheet integration for exporting\n4. Add Files app integration for project management\n5. Create deep linking for project opening\n6. Implement system-wide search integration\n7. Add split view and slide over support\n8. Create external keyboard shortcuts",
+        "testStrategy": "1. Test PWA installation on iPad devices\n2. Verify Share Sheet functionality\n3. Test Files app integration\n4. Validate deep linking\n5. Test split view and slide over functionality\n6. Verify keyboard shortcuts work correctly",
+        "priority": "medium",
+        "dependencies": [
+          49
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 56,
+        "title": "Implement offline-first architecture",
+        "description": "Create a comprehensive offline-first architecture to ensure full functionality without internet connectivity.",
+        "details": "1. Implement service worker for offline caching\n2. Create offline data synchronization system\n3. Add offline indicator and status UI\n4. Implement background sync when connection returns\n5. Create conflict resolution for offline changes\n6. Add offline equipment library with complete functionality\n7. Implement offline project management\n8. Create offline measurement and calibration system",
+        "testStrategy": "1. Test all functionality in airplane mode\n2. Verify data synchronization when connection returns\n3. Test conflict resolution for offline changes\n4. Validate offline equipment library functionality\n5. Test offline project management",
+        "priority": "high",
+        "dependencies": [
+          49,
+          50
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 57,
+        "title": "Implement undo/redo system",
+        "description": "Create a comprehensive undo/redo system using the Command pattern for all canvas operations.",
+        "details": "1. Implement Command pattern for canvas operations\n2. Create command history stack\n3. Add undo/redo UI controls\n4. Implement keyboard shortcuts (Cmd+Z, Cmd+Shift+Z)\n5. Create gesture shortcuts (two-finger tap for undo)\n6. Add visual feedback for undo/redo operations\n7. Implement command merging for efficiency\n8. Create command serialization for history persistence",
+        "testStrategy": "1. Test undo/redo functionality for all operations\n2. Verify keyboard shortcuts work correctly\n3. Test gesture shortcuts on iPad devices\n4. Validate history persistence across sessions\n5. Test with complex operation sequences",
+        "priority": "medium",
+        "dependencies": [
+          47
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 58,
+        "title": "Implement custom equipment creation",
+        "description": "Create a system for users to define and save custom equipment items.",
+        "details": "1. Design custom equipment creation UI\n2. Implement image upload and processing\n3. Create equipment property editor\n4. Add shape definition tools\n5. Implement snap point configuration\n6. Create clearance zone editor\n7. Add custom equipment categorization\n8. Implement custom equipment library management",
+        "testStrategy": "1. Test custom equipment creation workflow\n2. Verify image upload and processing\n3. Test equipment property editing\n4. Validate snap point configuration\n5. Test custom equipment in layouts",
+        "priority": "medium",
+        "dependencies": [
+          46
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 59,
+        "title": "Implement iPad Pro interface optimizations",
+        "description": "Optimize the interface specifically for iPad Pro 11\" and 12.9\" models with landscape-first design.",
+        "details": "1. Create landscape-first layout design\n2. Implement professional layout with sidebar + canvas + floating tools\n3. Design touch zones with strategic control placement\n4. Create clear visual hierarchy for large screen\n5. Implement multi-panel views for side-by-side functionality\n6. Add safe area awareness for rounded corners and home indicator\n7. Create seamless orientation transitions\n8. Implement trackpad and keyboard support",
+        "testStrategy": "1. Test on both 11\" and 12.9\" iPad Pro models\n2. Verify landscape and portrait orientation handling\n3. Test touch zones and control placement\n4. Validate multi-panel views\n5. Test with external keyboard and trackpad",
+        "priority": "high",
+        "dependencies": [
+          42
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 60,
+        "title": "Implement performance optimizations",
+        "description": "Optimize application performance to meet targets for frame rate, memory usage, and battery life.",
+        "details": "1. Implement canvas virtualization for rendering only visible objects\n2. Create object pooling system for graphics efficiency\n3. Add level-of-detail rendering at different zoom levels\n4. Implement background processing for heavy operations\n5. Create memory pressure handling with automatic cleanup\n6. Add performance monitoring and analytics\n7. Implement Metal rendering simulation for hardware acceleration\n8. Create ProMotion support for 120Hz refresh rate",
+        "testStrategy": "1. Measure frame rate during complex operations\n2. Monitor memory usage with large projects\n3. Test battery impact during extended use\n4. Validate performance with 1000+ equipment items\n5. Test on different iPad Pro generations",
+        "priority": "high",
+        "dependencies": [
+          43,
+          47
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 61,
+        "title": "Implement accessibility features",
+        "description": "Add comprehensive accessibility support including VoiceOver, dynamic type, and other accessibility features.",
+        "details": "1. Implement VoiceOver support for all UI elements\n2. Add dynamic type support for text scaling\n3. Create high contrast mode\n4. Implement reduced motion option\n5. Add keyboard navigation for all functions\n6. Create screen reader descriptions for canvas elements\n7. Implement accessibility labels and hints\n8. Add ARIA attributes for web components",
+        "testStrategy": "1. Test with VoiceOver enabled\n2. Verify dynamic type scaling at all sizes\n3. Test high contrast mode\n4. Validate keyboard navigation\n5. Test with accessibility audit tools",
+        "priority": "medium",
+        "dependencies": [
+          59
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 62,
+        "title": "Create comprehensive testing suite",
+        "description": "Develop a comprehensive testing suite for unit, integration, and end-to-end testing.",
+        "details": "1. Set up Jest for unit testing\n2. Implement React Testing Library for component tests\n3. Add Cypress for end-to-end testing\n4. Create test fixtures and mocks\n5. Implement performance testing tools\n6. Add visual regression testing\n7. Create automated accessibility testing\n8. Implement continuous integration with GitHub Actions",
+        "testStrategy": "1. Achieve 80%+ code coverage with unit tests\n2. Create end-to-end tests for all critical user flows\n3. Implement visual regression tests for UI components\n4. Add performance benchmarks and thresholds\n5. Test on actual iPad devices for final validation",
+        "priority": "medium",
+        "dependencies": [
+          41
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 63,
+        "title": "Analyze wireframe screenshots and create UI/UX specification",
+        "description": "Analyze the provided wireframe screenshots to extract layout principles, component structure, and user interaction patterns for implementation guidance.",
+        "details": "Review the 7 wireframe screenshots provided by the user to understand the desired layout and feel. Extract key UI patterns including sidebar navigation, canvas workspace, tool panels, and interaction flows. Create detailed specifications for component hierarchy, responsive behavior, and iPad-specific optimizations. Document the visual hierarchy and information architecture shown in the wireframes.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          41
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Analyze layout structure and grid system",
+            "description": "Review wireframes to identify the core layout structure, grid system, and spatial organization principles used across all screens. Document the main layout regions (sidebar, canvas, toolbars) and their relative proportions.",
+            "dependencies": [],
+            "details": "1. Measure and document the proportional relationships between major UI regions\n2. Identify the underlying grid system (columns, gutters, margins)\n3. Document responsive breakpoints visible in the wireframes\n4. Create a layout specification document with measurements and proportions\n5. Note any layout variations between different screens\n6. Document iPad-specific layout considerations",
+            "status": "pending",
+            "testStrategy": "Compare layout specification against all 7 wireframes to ensure consistency and completeness"
+          },
+          {
+            "id": 2,
+            "title": "Identify and catalog UI components",
+            "description": "Extract and catalog all UI components visible in the wireframes, creating a comprehensive component inventory with hierarchy and relationships.",
+            "dependencies": [
+              "63.1"
+            ],
+            "details": "1. Create a spreadsheet or document listing all UI components\n2. Categorize components by type (navigation, input, display, etc.)\n3. Document component states where visible (default, hover, active, disabled)\n4. Note component variations across different screens\n5. Create a component hierarchy diagram showing parent-child relationships\n6. Document reusable patterns and component composition strategies",
+            "status": "pending",
+            "testStrategy": "Verify component inventory against wireframes to ensure all visible elements are documented"
+          },
+          {
+            "id": 3,
+            "title": "Document navigation and information architecture",
+            "description": "Analyze the navigation structure, user flows, and information architecture demonstrated in the wireframes. Map out the relationship between different screens and how users navigate between them.",
+            "dependencies": [
+              "63.1"
+            ],
+            "details": "1. Create a sitemap or screen flow diagram\n2. Document primary and secondary navigation patterns\n3. Identify breadcrumb or history navigation elements\n4. Map user flows for key tasks visible in the wireframes\n5. Document the information hierarchy within each screen\n6. Note any contextual navigation elements or patterns",
+            "status": "pending",
+            "testStrategy": "Validate navigation documentation by tracing user flows across the wireframe set"
+          },
+          {
+            "id": 4,
+            "title": "Analyze interaction patterns and behaviors",
+            "description": "Document all interactive elements and their behaviors, including drag-and-drop interactions, tool selection, canvas manipulation, and other user actions visible in the wireframes.",
+            "dependencies": [
+              "63.2"
+            ],
+            "details": "1. Identify all interactive elements across wireframes\n2. Document expected behaviors for each interaction type\n3. Detail canvas-specific interactions (pan, zoom, select, etc.)\n4. Document drag-and-drop patterns for equipment placement\n5. Specify tool selection and application behaviors\n6. Note any gesture-based interactions specific to iPad\n7. Document feedback mechanisms for user actions",
+            "status": "pending",
+            "testStrategy": "Create test scenarios for each interaction pattern to validate completeness"
+          },
+          {
+            "id": 5,
+            "title": "Create responsive behavior specifications",
+            "description": "Define how the UI should adapt across different screen sizes and orientations, with particular focus on iPad-specific optimizations mentioned in the task description.",
+            "dependencies": [
+              "63.1",
+              "63.2"
+            ],
+            "details": "1. Document responsive behavior for each major UI region\n2. Specify component behavior across different breakpoints\n3. Create specifications for portrait vs. landscape orientations\n4. Detail iPad-specific touch target sizes and spacing\n5. Document split-screen and multitasking considerations\n6. Specify minimum and maximum dimensions for UI elements\n7. Create responsive grid specifications",
+            "status": "pending",
+            "testStrategy": "Test specifications against iPad dimensions in both orientations to ensure appropriate scaling"
+          },
+          {
+            "id": 6,
+            "title": "Compile comprehensive UI/UX specification document",
+            "description": "Consolidate all analysis into a comprehensive UI/UX specification document that can guide implementation, including visual hierarchy, component specifications, interaction patterns, and responsive behavior.",
+            "dependencies": [
+              "63.1",
+              "63.2",
+              "63.3",
+              "63.4",
+              "63.5"
+            ],
+            "details": "1. Create an executive summary of key UI/UX principles\n2. Compile layout specifications with visual diagrams\n3. Include the complete component inventory with specifications\n4. Document all interaction patterns with behavior descriptions\n5. Include navigation maps and user flows\n6. Add responsive behavior specifications with breakpoint details\n7. Create an implementation priority guide for development\n8. Include references to specific wireframes for each section",
+            "status": "pending",
+            "testStrategy": "Review final specification document against all wireframes to ensure comprehensive coverage of all UI/UX elements and patterns"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-29T16:55:31.450Z",
+      "updated": "2025-07-30T02:18:42.630Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

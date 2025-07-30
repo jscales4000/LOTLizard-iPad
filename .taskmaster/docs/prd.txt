@@ -1,0 +1,430 @@
+# LotPlanner iPad Pro - Professional Carnival Lot Planning Application
+## Comprehensive MVP Product Requirements Document
+
+**Version:** 1.0.0  
+**Date:** January 29, 2025  
+**Project Status:** Development Ready - iPad Pro MVP  
+
+---
+
+## 🎯 **Executive Summary**
+
+**LotPlanner iPad Pro** is a touch-optimized, professional-grade native iPad application designed specifically for carnival and fair operators to efficiently plan, visualize, and manage their lot layouts on-the-go. Built exclusively for iPad Pro devices, the application combines advanced multi-touch interactions, satellite imagery integration, and precision measurement tools to deliver a premium mobile planning experience that rivals desktop CAD applications.
+
+### **Key Value Proposition**
+- **Touch-First Professional Interface:** Native iPad Pro experience with advanced gesture recognition
+- **Satellite-Powered Planning:** High-resolution satellite imagery optimized for mobile workflows
+- **Professional Equipment Library:** Comprehensive touch-optimized database with drag-and-drop functionality
+- **Precision Touch Measurement:** Advanced calibration tools designed for finger and Apple Pencil input
+- **Offline-Capable Planning:** Full functionality without internet connectivity
+- **Real-Time Collaboration:** Live multi-user editing with conflict resolution
+- **Native iOS Integration:** Share sheets, file management, and system-wide search
+
+---
+
+## 👥 **Target Customer & Use Cases**
+
+### **Primary Customers**
+1. **Mobile Carnival Route Managers**
+   - Plan layouts while traveling between venues
+   - Make real-time adjustments on-site
+   - Collaborate with remote teams during setup
+
+2. **Fair Organizers in the Field**
+   - Conduct site surveys with tablet in hand
+   - Make immediate layout decisions on location
+   - Share plans instantly with vendors and crews
+
+3. **Equipment Setup Supervisors**
+   - Reference layouts during physical setup
+   - Make on-the-fly adjustments based on ground conditions
+   - Document actual placement vs. planned layout
+
+### **iPad-Specific Use Cases**
+
+#### **1. On-Site Layout Planning**
+- Conduct site surveys with iPad Pro in hand
+- Use camera to capture reference photos
+- Make real-time measurements with precision tools
+- Collaborate live with remote office teams
+- Export layouts directly to crew devices
+
+#### **2. Mobile Route Management**
+- Plan multiple venues during travel time
+- Compare venue options side-by-side
+- Access full equipment library offline
+- Sync changes when connectivity returns
+
+#### **3. Live Setup Coordination**
+- Reference layouts during physical setup
+- Make adjustments based on ground conditions
+- Coordinate with multiple teams simultaneously
+- Document changes for future reference
+
+---
+
+## 🚀 **Core Features & Capabilities**
+
+### **1. Touch-Optimized Canvas Engine**
+- **Multi-Touch Canvas:** Advanced gesture recognition (pan, pinch, rotate, tap, long-press)
+- **Precision Touch Targets:** 44pt minimum touch targets following Apple HIG
+- **Haptic Feedback:** Tactile confirmation for selections and actions
+- **Apple Pencil Support:** Sub-pixel precision for detailed work
+- **Gesture Shortcuts:** Custom multi-finger gestures for power users
+- **60fps Performance:** Smooth interactions with 1000+ equipment items
+- **Magnetic Snapping:** Enhanced snap-to-grid and object alignment
+
+### **2. Professional Measurement System**
+- **Touch-Optimized Tools:** Large, finger-friendly measurement controls
+- **Precision Mode:** Long-press for fine adjustment and accuracy
+- **Real-World Calibration:** Scale calibration using known distances
+- **Multiple Units:** Support for feet, meters, and yards
+- **Measurement History:** Persistent measurement annotations
+- **Apple Pencil Integration:** Sub-millimeter precision drawing
+- **Visual Feedback:** Real-time measurement display with haptic confirmation
+
+### **3. Advanced Equipment Library**
+- **Touch-First Interface:** Large thumbnails and touch-friendly categories
+- **Smart Search:** Text search with predictive input and filtering
+- **Drag & Drop:** Natural touch-based equipment placement
+- **Quick Access:** Recently used and favorited equipment
+- **Custom Equipment:** Image upload and equipment creation
+- **Offline Library:** Full functionality without internet connection
+- **Equipment Details:** Expandable info panels with specifications
+
+### **4. Native iPad Integration**
+- **Files App Integration:** Native iOS file management and sharing
+- **Share Sheet Support:** Export to any compatible app
+- **Spotlight Search:** System-wide project and equipment search
+- **Background App Refresh:** Automatic sync when app returns to foreground
+- **Split View Support:** Use alongside other apps
+- **Slide Over Compatibility:** Quick reference while using other apps
+- **Keyboard Shortcuts:** External keyboard support for power users
+
+### **5. Real-Time Collaboration**
+- **Live Multi-User Editing:** Multiple users on same project simultaneously
+- **Conflict Resolution:** Automatic merge and manual conflict resolution
+- **User Cursors:** See where team members are working
+- **Text Annotations:** Add text notes to layout elements
+- **Change History:** Visual diff showing who changed what
+- **Offline Mode:** Work offline, sync when connected
+- **Role-Based Permissions:** View-only, edit, or admin access levels
+
+### **6. Enhanced Canvas Interactions**
+- **Multi-Select:** Lasso and rectangle selection tools
+- **Bulk Operations:** Move, rotate, or delete multiple items
+- **Layering System:** Front/back positioning with visual indicators
+- **Equipment Rotation:** In-place rotation with angle snapping
+- **Duplication:** Touch-and-drag to duplicate equipment
+- **Grouping:** Create and manipulate equipment groups
+- **Alignment Tools:** Smart guides and automatic alignment
+
+### **7. Professional Output & Export**
+- **Native PDF Generation:** High-quality layouts with scale bars
+- **AirPrint Support:** Direct printing to compatible printers
+- **Photo Export:** High-resolution PNG export for presentations
+- **Project Packaging:** Bundle project with custom equipment for sharing
+- **Email Integration:** Direct email sharing with attachments
+- **Cloud Storage:** iCloud, Dropbox, and Google Drive integration
+
+### **8. iPad Pro Optimizations**
+
+#### **12.9" iPad Pro Interface**
+- **Landscape-First Design:** Optimized for landscape orientation
+- **Professional Layout:** Sidebar + canvas + floating tools
+- **Touch Zones:** Strategic placement of controls for thumb access
+- **Visual Hierarchy:** Clear information architecture for large screen
+- **Multi-Panel Views:** Side-by-side equipment library and properties
+
+#### **Performance Features**
+- **M-Series Chip Optimization:** Leverage full iPad Pro computational power
+- **Metal Rendering:** Hardware-accelerated canvas rendering
+- **ProMotion Support:** 120Hz refresh rate for smooth interactions
+- **Memory Management:** Efficient handling of large projects
+- **Background Processing:** Non-blocking operations for smooth UX
+
+---
+
+## 🏗️ **Technical Architecture**
+
+### **Web-Based iPad-Optimized Stack**
+- **Platform:** Web application optimized for iPad Pro browsers
+- **Framework:** Next.js 15.4.4 with React 18 and TypeScript
+- **Canvas Engine:** Konva.js with React-Konva for high-performance 2D rendering
+- **Styling:** Tailwind CSS with iPad-specific responsive design
+- **State Management:** Context API with React hooks
+- **Touch/Gesture:** React-use-gesture for iPad-like interactions
+
+### **Key Web Technologies**
+- **React:** Component-based UI framework
+- **TypeScript:** Type-safe development
+- **Konva.js:** Hardware-accelerated canvas rendering
+- **React-DnD:** Drag and drop functionality
+- **Framer Motion:** Smooth animations and transitions
+- **React-use-gesture:** Touch and gesture recognition
+- **PWA Features:** Service workers for offline capability
+
+### **Backend Integration**
+- **Primary Storage:** Supabase with PostgreSQL + PostGIS
+- **Real-Time:** Supabase Realtime for live collaboration
+- **File Storage:** Supabase Storage for images and projects
+- **Authentication:** Supabase Auth (security implementation deferred)
+- **Offline Storage:** IndexedDB with local persistence
+
+### **Architecture Patterns**
+- **MVVM Pattern:** Model-View-ViewModel with Combine
+- **Coordinator Pattern:** Navigation and flow management
+- **Repository Pattern:** Data access abstraction
+- **Observer Pattern:** Reactive UI updates
+- **Command Pattern:** Undo/redo functionality
+
+### **Performance Optimizations**
+- **Canvas Virtualization:** Render only visible objects
+- **Object Pooling:** Reuse graphics objects for efficiency
+- **Level-of-Detail:** Simplified rendering at low zoom levels
+- **Background Processing:** Heavy operations on background queues
+- **Memory Pressure Handling:** Automatic cleanup during low memory
+
+### **Data Models**
+
+#### **Touch-Optimized Equipment**
+```swift
+struct Equipment {
+    let id: UUID
+    let name: String
+    let category: EquipmentCategory
+    let shape: EquipmentShape
+    let dimensions: EquipmentDimensions
+    let specifications: EquipmentSpecs
+    let touchTargetSize: CGSize  // Minimum 44pt
+    let snapPoints: [CGPoint]    // Magnetic snap locations
+    let clearanceZone: CGFloat
+    let thumbnail: UIImage
+}
+```
+
+#### **Gesture-Aware Canvas**
+```swift
+struct CanvasState {
+    var transform: CGAffineTransform
+    var selectedItems: Set<UUID>
+    var activeGesture: GestureType?
+    var touchHistory: [TouchEvent]
+    var snapTargets: [SnapTarget]
+    var measurements: [Measurement]
+}
+```
+
+---
+
+## 🎨 **User Experience Design**
+
+### **Design Principles**
+1. **Touch-First:** Every interaction optimized for finger and Apple Pencil
+2. **Professional Aesthetics:** Clean, business-appropriate interface
+3. **iOS Native Feel:** Follows Apple Human Interface Guidelines
+4. **Contextual Controls:** Tools appear based on selection and mode
+5. **Gesture-Driven:** Natural multi-touch interactions throughout
+6. **Accessibility First:** VoiceOver and accessibility feature support
+
+### **Color Scheme & Visual Design**
+- **Primary:** iOS Blue (#007AFF) - Native iOS accent color
+- **Success:** iOS Green (#34C759) - Calibrated measurements, confirmations
+- **Warning:** iOS Orange (#FF9500) - Edit mode, attention states
+- **Error:** iOS Red (#FF3B30) - Deletion, error states
+- **Background:** Dynamic colors that adapt to light/dark mode
+- **Surfaces:** Native iOS material effects and transparency
+
+### **Typography**
+- **Primary:** SF Pro Display - Apple's system font
+- **Monospace:** SF Mono - For measurements and technical data
+- **Dynamic Type:** Supports user's preferred text size settings
+- **Hierarchy:** Clear distinction between headers and body text
+
+### **Touch Interaction Patterns**
+- **Single Tap:** Select equipment or complete measurements
+- **Double Tap:** Edit mode or detailed view
+- **Long Press:** Context menus and precision mode
+- **Drag:** Move equipment and canvas panning
+- **Pinch:** Zoom in/out with smooth scaling
+- **Two-Finger Tap:** Undo operation
+- **Three-Finger Swipe:** Navigate between projects
+- **Apple Pencil Double-Tap:** Switch between tools
+
+### **iPad Pro Specific Adaptations**
+- **Safe Area Awareness:** Respect rounded corners and home indicator
+- **Orientation Support:** Seamless landscape/portrait transitions
+- **Keyboard Support:** Magic Keyboard and Smart Keyboard shortcuts
+- **Trackpad Support:** Cursor interactions when trackpad connected
+- **External Display:** Support for extended displays and mirroring
+
+---
+
+## 📊 **Business Model & Market Opportunity**
+
+### **iPad-Specific Market Advantages**
+- **Premium Market:** iPad Pro users represent high-value professional segment
+- **App Store Distribution:** Access to 1B+ iOS users worldwide
+- **Professional Adoption:** Growing iPad adoption in business environments
+- **Mobility Premium:** Charge premium for professional mobile capabilities
+
+### **Revenue Streams**
+1. **Premium App Purchase:** $99-199 one-time purchase
+2. **Pro Subscription:** $29/month for advanced features and collaboration
+3. **Team Plans:** $199/month for multi-user organizations
+4. **Enterprise Licensing:** Custom pricing for large organizations
+5. **Professional Services:** Setup, training, and custom configurations
+
+### **Competitive Advantages**
+1. **Platform Exclusivity:** Only professional lot planning app for iPad Pro
+2. **Touch Optimization:** Superior mobile experience vs. desktop adaptations
+3. **Apple Integration:** Deep iOS integration unavailable to web apps
+4. **Performance:** Native app performance advantages
+5. **Professional Features:** Full CAD-level functionality on mobile
+
+---
+
+## 🚧 **Development Roadmap**
+
+### **Phase 1: iPad Pro MVP (Target: 6 months)**
+- ✅ Architecture and project setup
+- 🔄 Core touch-optimized canvas engine
+- 🔄 Equipment library with drag-and-drop
+- 🔄 Basic measurement tools
+- 🔄 Project save/load with Core Data
+- 🔄 Apple Pencil integration
+- 🔄 iPad Pro interface optimization
+
+### **Phase 2: Professional Features (Months 7-12)**
+- 📋 Real-time collaboration system
+- 📋 Advanced measurement and calibration
+- 📋 Professional PDF export
+- 📋 Voice annotations and dictation
+- 📋 Equipment specifications database
+- 📋 Offline-first architecture
+
+### **Phase 3: Advanced Integration (Year 2)**
+- 📋 Apple Pencil advanced features (pressure sensitivity)
+- 📋 LiDAR integration for AR measurements
+- 📋 Siri Shortcuts integration
+- 📋 Advanced analytics and reporting
+- 📋 API for third-party integrations
+- 📋 Apple Watch companion app
+
+### **Phase 4: Platform Expansion (Year 3)**
+- 📋 iPhone companion app
+- 📋 Mac Catalyst version
+- 📋 Apple Vision Pro spatial computing
+- 📋 Advanced AI layout optimization
+- 📋 Industry-specific modules
+
+---
+
+## 🔧 **Technical Requirements**
+
+### **Device Requirements**
+- **Required:** iPad Pro 11" or 12.9" (3rd generation or newer)
+- **iOS Version:** iOS 17.0 or later
+- **Storage:** 2GB available space minimum
+- **RAM:** 6GB+ (handled automatically by device requirements)
+- **Network:** Wi-Fi or cellular for sync and satellite imagery
+
+### **Recommended Accessories**
+- **Apple Pencil:** 2nd generation for precision work
+- **Magic Keyboard:** Enhanced productivity and shortcuts
+- **External Display:** Up to 6K resolution support
+
+### **Performance Targets**
+- **App Launch:** <2 seconds cold launch
+- **Canvas Performance:** 120fps on ProMotion displays
+- **Touch Response:** <16ms touch-to-visual feedback
+- **Memory Usage:** <2GB for projects with 1000+ items
+- **Battery Life:** 8+ hours continuous use
+
+### **Integration Requirements**
+- **iCloud:** Seamless project sync across devices
+- **Files App:** Native file management integration
+- **Share Sheet:** Export to any compatible app
+- **Shortcuts App:** Automation and workflow integration
+- **Spotlight:** System-wide project search
+
+---
+
+## 📈 **Success Metrics & KPIs**
+
+### **User Engagement (iPad-Specific)**
+- **Daily Active Users:** 500+ within first year
+- **Session Duration:** 60+ minutes average (mobile-optimized sessions)
+- **Projects per User:** 10+ active projects per user
+- **Apple Pencil Usage:** 70%+ of users utilize Apple Pencil features
+- **Collaboration Sessions:** 40% of projects involve multiple users
+
+### **Business Metrics**
+- **App Store Rating:** Maintain 4.5+ stars
+- **Premium Conversion:** 25% of free users upgrade to Pro
+- **Customer Lifetime Value:** $1,500+ per professional user
+- **Retention:** 80% monthly retention for paid users
+- **Enterprise Adoption:** 50+ enterprise customers by year 2
+
+### **Technical Performance**
+- **Crash Rate:** <0.1% crash-free sessions
+- **App Store Review Time:** Maintain fast approval process
+- **Performance:** 95%+ of sessions maintain target frame rates
+- **Sync Reliability:** 99.9% successful sync operations
+- **Offline Functionality:** 100% feature availability offline
+
+---
+
+## 🛡️ **Security & Privacy**
+
+### **iOS Security Advantages**
+- **App Store Review:** Apple's security screening process
+- **Sandboxing:** Isolated app environment for data protection
+- **Hardware Security:** Secure Enclave for sensitive data
+- **Biometric Authentication:** Face ID/Touch ID integration
+- **App Transport Security:** Encrypted network communications
+
+### **Privacy-First Approach**
+- **Minimal Data Collection:** Only essential usage analytics
+- **Local Processing:** Equipment recognition and AI features on-device
+- **User Consent:** Clear opt-in for any data sharing
+- **Apple Sign In:** Privacy-focused authentication option
+- **No Tracking:** Comply with App Tracking Transparency
+
+### **Data Protection**
+- **Core Data Encryption:** Encrypted local storage
+- **CloudKit Security:** Apple's enterprise-grade cloud security
+- **Project Encryption:** End-to-end encryption for sensitive projects
+- **Secure Sharing:** Encrypted project sharing and collaboration
+
+---
+
+## 🎯 **MVP Success Criteria**
+
+### **Core Functionality Validation**
+- **Touch Canvas:** Smooth 120fps performance with 100+ equipment items
+- **Equipment Library:** Complete drag-and-drop workflow from library to canvas
+- **Measurement Tools:** Accurate real-world measurements with calibration
+- **Project Management:** Reliable save/load with Core Data persistence
+- **Apple Pencil:** Sub-pixel precision for detailed layout work
+
+### **User Experience Validation**
+- **Onboarding:** 90% completion rate for first-time users
+- **Task Completion:** Users can create complete layout in <30 minutes
+- **Touch Optimization:** All interactions meet 44pt minimum touch targets
+- **Performance:** Zero dropped frames during normal usage
+- **Accessibility:** Full VoiceOver support for all core features
+
+### **Technical Validation**
+- **Device Compatibility:** Runs smoothly on iPad Pro 3rd gen and newer
+- **Memory Efficiency:** <1GB RAM usage for typical projects
+- **Battery Impact:** <20% battery drain per hour of active use
+- **Offline Capability:** 100% feature availability without network
+- **Data Integrity:** Zero data loss during app lifecycle transitions
+
+### **Business Validation**
+- **User Feedback:** 4.0+ average rating from beta testers
+- **Feature Usage:** 80%+ of users utilize core canvas and measurement tools
+- **Session Length:** 45+ minute average session duration
+- **Return Usage:** 60%+ of users return within 7 days of first use
+- **Professional Adoption:** Positive feedback from 10+ carnival industry professionals

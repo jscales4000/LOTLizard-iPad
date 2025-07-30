@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    /* Prevent zoom on double tap */
+    touch-action: manipulation;
+  }
+  
+  body {
+    /* iOS-style scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent text selection on touch */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+@layer components {
+  /* Touch-friendly button base */
+  .btn-touch {
+    @apply min-h-touch-sm min-w-touch-sm flex items-center justify-center rounded-lg font-medium transition-all duration-150;
+  }
+  
+  /* iOS-style button variants */
+  .btn-primary {
+    @apply btn-touch bg-ios-blue text-white hover:bg-blue-600 active:bg-blue-700;
+  }
+  
+  .btn-secondary {
+    @apply btn-touch bg-ios-gray-light text-ios-gray-dark border border-ios-gray hover:bg-gray-100;
+  }
+  
+  /* Canvas container */
+  .canvas-container {
+    @apply relative overflow-hidden bg-white rounded-lg shadow-sm;
+    touch-action: none; /* Disable default touch behaviors for canvas */
+  }
+  
+  /* Sidebar styles */
+  .sidebar {
+    @apply bg-white border-r border-ios-gray-light shadow-sm;
+  }
+  
+  /* Tool panel styles */
+  .tool-panel {
+    @apply bg-white border border-ios-gray-light rounded-lg shadow-sm p-4;
+  }
+}
