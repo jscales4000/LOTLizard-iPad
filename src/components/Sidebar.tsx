@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useState, useMemo, useCallback, useContext } from 'react'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { X, Edit, Search } from 'lucide-react'
 import { equipmentDatabase, equipmentCategories, getEquipmentByCategory, searchEquipment, type EquipmentItem } from '../lib/equipmentDatabase'
-import { KonvaDragContext } from '../context/KonvaDragContext'
+import { useRobustDrag } from '@/context/RobustDragContext'
 
 interface SidebarProps {
   isOpen: boolean
@@ -32,70 +32,123 @@ export default function Sidebar({ isOpen, onClose, onToggleProperties, onEquipme
     onEquipmentSelect?.(equipment)
   }
   
-  // Context for Konva drag and drop operations
-  const konvaDragContext = useContext(KonvaDragContext)
+  // Robust drag context
+  const { initiateDrag, completeDrop, debugState } = useRobustDrag()
   
-  // New dual-mode drag handler for both HTML5 and Konva drag systems
-  const handleDragStart = useCallback((e: React.DragEvent, equipment: EquipmentItem) => {
-    console.log('HTML5 Drag started for:', equipment.name)
-    
-    // Continue supporting HTML5 drag for backward compatibility
-    if (e.target instanceof HTMLElement) {
-      e.dataTransfer.setDragImage(e.target, 25, 25)
+  // Register callback to reset selection when equipment is placed
+  useEffect(() => {
+    const handleEquipmentPlaced = () => {
+      console.log('🔄 SIDEBAR: Equipment placed, resetting selection')
+      setSelectedEquipment(null)
     }
     
-    e.dataTransfer.effectAllowed = 'copy'
-    const jsonData = JSON.stringify(equipment)
-    e.dataTransfer.setData('application/json', jsonData)
-    e.dataTransfer.setData('text/plain', jsonData)
-    e.dataTransfer.setData('text', jsonData)
+    window.__LOTLIZARD_EQUIPMENT_PLACED__ = handleEquipmentPlaced
+    
+    return () => {
+      delete window.__LOTLIZARD_EQUIPMENT_PLACED__
+    }
   }, [])
-
-  // Handle drag-and-drop with Konva context if available
+  
+  // Robust drag handler with selection
   const handleEquipmentMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, equipment: EquipmentItem) => {
-      console.log('👆 SIDEBAR: Equipment mousedown', { equipment });
-      
-      // Check if drag context is available
-      if (!konvaDragContext || !konvaDragContext.startDrag) {
-        console.log('⛔ SIDEBAR: No drag context available');
-        return;
-      }
+      console.log('👆 SIDEBAR: Equipment mousedown', equipment.name);
       
       // Only left mouse button triggers drag
       if (e.button !== 0) return
     
-    console.log('Konva drag initiated for:', equipment.name)
-    
-    // Prevent default to avoid text selection
-    e.preventDefault()
-    
-    // Start Konva drag operation via context
-    konvaDragContext.startDrag({
-      equipment,
-      initialPosition: { x: e.clientX, y: e.clientY },
-      source: 'sidebar'
-    })
-  }, [konvaDragContext])
+      // Immediately select the equipment on mousedown
+      setSelectedEquipment(equipment)
+      onEquipmentSelect?.(equipment)
+      
+      console.log('🚀 Starting simple drag for:', equipment.name)
+      
+      // Prevent default to avoid text selection
+      e.preventDefault()
+      
+      let hasDragged = false
+      const startPos = { x: e.clientX, y: e.clientY }
+      
+      // Set up mouse move and mouse up handlers
+      const handleMouseMove = (moveEvent: MouseEvent) => {
+        const distance = Math.sqrt(
+          Math.pow(moveEvent.clientX - startPos.x, 2) + 
+          Math.pow(moveEvent.clientY - startPos.y, 2)
+        )
+        
+        // Start drag if moved more than 5 pixels
+        if (distance > 5 && !hasDragged) {
+          hasDragged = true
+          initiateDrag(equipment, { x: moveEvent.clientX, y: moveEvent.clientY })
+        }
+      }
+      
+      const handleMouseUp = (upEvent: MouseEvent) => {
+        if (hasDragged) {
+          console.log('🎯 Attempting drop at:', { x: upEvent.clientX, y: upEvent.clientY })
+          const dropSuccess = completeDrop({ x: upEvent.clientX, y: upEvent.clientY })
+          console.log('✅ Drop completed:', dropSuccess ? 'SUCCESS' : 'FAILED')
+        }
+        
+        // Clean up event listeners
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
+      
+      // Add event listeners
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    }, [initiateDrag, completeDrop, setSelectedEquipment, onEquipmentSelect])
   
-  // Touch start handler for iPad support
+  // Touch handler for iPad support with selection
   const handleTouchStart = useCallback((e: React.TouchEvent, equipment: EquipmentItem) => {
-    if (!konvaDragContext || !konvaDragContext.startDrag) return
+    console.log('👆 SIDEBAR: Touch start for:', equipment.name)
     
-    console.log('Touch drag initiated for:', equipment.name)
+    // Immediately select the equipment on touch start
+    setSelectedEquipment(equipment)
+    onEquipmentSelect?.(equipment)
     
     // Prevent scrolling while dragging
     e.preventDefault()
     
     const touch = e.touches[0]
+    let hasDragged = false
+    const startPos = { x: touch.clientX, y: touch.clientY }
     
-    // Start Konva drag operation via context
-    konvaDragContext.startDrag({
-      equipment,
-      initialPosition: { x: touch.clientX, y: touch.clientY },
-      source: 'sidebar'
-    })
-  }, [konvaDragContext])
+    // Set up touch move and touch end handlers
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      if (moveEvent.touches.length > 0) {
+        const currentTouch = moveEvent.touches[0]
+        const distance = Math.sqrt(
+          Math.pow(currentTouch.clientX - startPos.x, 2) + 
+          Math.pow(currentTouch.clientY - startPos.y, 2)
+        )
+        
+        // Start drag if moved more than 5 pixels
+        if (distance > 5 && !hasDragged) {
+          hasDragged = true
+          initiateDrag(equipment, { x: currentTouch.clientX, y: currentTouch.clientY })
+        }
+      }
+    }
+    
+    const handleTouchEnd = (endEvent: TouchEvent) => {
+      if (hasDragged && endEvent.changedTouches.length > 0) {
+        const endTouch = endEvent.changedTouches[0]
+        console.log('🎯 Attempting touch drop at:', { x: endTouch.clientX, y: endTouch.clientY })
+        const dropSuccess = completeDrop({ x: endTouch.clientX, y: endTouch.clientY })
+        console.log('✅ Touch drop completed:', dropSuccess ? 'SUCCESS' : 'FAILED')
+      }
+      
+      // Clean up event listeners
+      document.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchend', handleTouchEnd)
+    }
+    
+    // Add event listeners
+    document.addEventListener('touchmove', handleTouchMove)
+    document.addEventListener('touchend', handleTouchEnd)
+  }, [initiateDrag, completeDrop, setSelectedEquipment, onEquipmentSelect])
 
   if (!isOpen) return null
 
@@ -189,8 +242,6 @@ export default function Sidebar({ isOpen, onClose, onToggleProperties, onEquipme
                 <div
                   key={item.id}
                   onClick={() => handleEquipmentClick(item)}
-                  draggable={!konvaDragContext}
-                  onDragStart={(e) => handleDragStart(e, item)}
                   onMouseDown={(e) => handleEquipmentMouseDown(e, item)}
                   onTouchStart={(e) => handleTouchStart(e, item)}
                   className={`bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-all cursor-grab active:cursor-grabbing border-2 min-h-[120px] ${

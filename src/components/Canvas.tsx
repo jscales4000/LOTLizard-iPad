@@ -3,17 +3,16 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { useCalibration, CalibrationPoint } from '@/lib/useCalibration'
 import CanvasToolOverlay from './CanvasToolOverlay'
+import { RobustCanvas } from './RobustCanvas'
+import { CanvasEquipmentItem, toCanvasEquipmentItem } from '@/types/canvasTypes'
+import { useRobustDrag } from '@/context/RobustDragContext'
 import dynamic from 'next/dynamic'
 
-// Import types
-import type { KonvaCanvasConnectorProps } from './canvas/KonvaCanvasConnector'
-import { CanvasTypeAdapter } from './canvas/CanvasTypes'
-
-// Import Konva components with SSR disabled
-const KonvaCanvasConnector = dynamic<KonvaCanvasConnectorProps>(
-  () => import('./canvas/KonvaCanvasConnector').then(mod => mod.KonvaCanvasConnector),
-  { ssr: false }
-)
+// Konva imports temporarily removed to bypass cache issues
+// const KonvaCanvasConnector = dynamic(
+//   () => import('./canvas/KonvaCanvasConnector_New').then(mod => ({ default: mod.KonvaCanvasConnector })),
+//   { ssr: false }
+// )
 
 // Add CSS for drop targets
 import './canvas.css'
@@ -46,20 +45,23 @@ interface Equipment {
 export default function Canvas({ selectedTool, isCalibrating, onCalibrationComplete, satelliteImageData }: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [equipment, setEquipment] = useState<Equipment[]>([])
+  const [equipment, setEquipment] = useState<CanvasEquipmentItem[]>([])
   const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null)
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 })
   const [scale, setScale] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
+  const [isLegacyDragging, setIsLegacyDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [draggedCalibrationPoint, setDraggedCalibrationPoint] = useState<'start' | 'end' | null>(null)
   const [canvasTool, setCanvasTool] = useState('select')
   const [satelliteImage, setSatelliteImage] = useState<HTMLImageElement | null>(null)
   const [satelliteImageLoaded, setSatelliteImageLoaded] = useState(false)
   
-  // Feature flag for Konva canvas implementation
-  const [useKonvaCanvas, setUseKonvaCanvas] = useState(false)
+  // Feature flag for robust canvas implementation
+  const [useRobustCanvas, setUseRobustCanvas] = useState(true)
+  
+  // Robust drag context
+  const { isDragging: isRobustDragging, draggedItem } = useRobustDrag()
   
   // Load satellite image when data changes
   useEffect(() => {
@@ -388,15 +390,10 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
       console.log('Drop position:', { x, y, canvasX, canvasY, scale, offset })
       
       // Create equipment instance with position
-      const newEquipment: Equipment = {
-        ...equipment,
-        x: canvasX,
-        y: canvasY,
-        width: equipment.dimensions?.width * 10 || 50, // Scale feet to pixels (1 foot = 10 pixels)
-        height: equipment.dimensions?.length * 10 || 50,
-        rotation: 0,
-        id: `${equipment.id}-${Date.now()}` // Make unique
-      }
+      const newEquipment: CanvasEquipmentItem = toCanvasEquipmentItem(equipment, { x: canvasX, y: canvasY })
+      newEquipment.width = equipment.dimensions?.width * 10 || 50 // Scale feet to pixels (1 foot = 10 pixels)
+      newEquipment.height = equipment.dimensions?.length * 10 || 50
+      newEquipment.id = `${equipment.id}-${Date.now()}` // Make unique
       
       // Add to equipment list
       setEquipment(prev => [...prev, newEquipment])
@@ -484,7 +481,7 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
     } else {
       setSelectedEquipment(null)
       if (canvasTool === 'move' || canvasTool === 'select') {
-        setIsDragging(true)
+        setIsLegacyDragging(true)
         setDragStart({ x: e.clientX, y: e.clientY })
       }
     }
@@ -508,16 +505,16 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
       return
     }
     
-    if (isDragging) {
+    if (isLegacyDragging) {
       const deltaX = e.clientX - dragStart.x
       const deltaY = e.clientY - dragStart.y
       setOffset(prev => ({ x: prev.x + deltaX, y: prev.y + deltaY }))
       setDragStart({ x: e.clientX, y: e.clientY })
     }
-  }, [isDragging, dragStart, draggedCalibrationPoint, calibrationState.line, offset, scale, updateCalibrationLine])
+  }, [isLegacyDragging, dragStart, draggedCalibrationPoint, calibrationState.line, offset, scale, updateCalibrationLine])
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
+    setIsLegacyDragging(false)
     setDraggedCalibrationPoint(null)
   }, [])
 
@@ -644,22 +641,13 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
         touchAction: 'none',
         position: 'relative',
       }}>
-      {useKonvaCanvas ? (
-        // New Konva-based canvas implementation
-        <KonvaCanvasConnector
+      {useRobustCanvas ? (
+        // New robust canvas implementation with timing fixes
+        <RobustCanvas
           width={canvasSize.width}
           height={canvasSize.height}
-          equipment={CanvasTypeAdapter.toEquipmentItems(equipment)}
-          scale={scale}
-          offset={offset}
-          satelliteImage={satelliteImage}
-          satelliteImageLoaded={satelliteImageLoaded}
-          selectedEquipment={selectedEquipment}
-          onEquipmentUpdate={(equipmentItems) => {
-            // Convert EquipmentItem[] back to Equipment[] with spatial properties preserved
-            setEquipment(CanvasTypeAdapter.toCanvasEquipments(equipmentItems) as any)
-          }}
-          onEquipmentSelect={setSelectedEquipment}
+          equipment={equipment}
+          onEquipmentUpdate={setEquipment}
           className="w-full h-full"
         />
       ) : (
@@ -696,11 +684,11 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
           <label className="flex items-center space-x-2 cursor-pointer">
             <input 
               type="checkbox" 
-              checked={useKonvaCanvas}
-              onChange={(e) => setUseKonvaCanvas(e.target.checked)}
+              checked={useRobustCanvas}
+              onChange={(e) => setUseRobustCanvas(e.target.checked)}
               className="h-4 w-4 text-blue-500"
             />
-            <span className="text-xs font-medium">Use Konva Canvas</span>
+            <span className="text-xs font-medium">Use Robust Canvas</span>
           </label>
         </div>
       )}

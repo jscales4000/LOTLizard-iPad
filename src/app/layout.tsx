@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { KonvaDragProvider } from '@/context/KonvaDragContext'
+import { RobustDragProvider } from '@/context/RobustDragContext'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -28,29 +28,32 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>
-        {/* Suppress hydration warnings for Windsurf development attributes */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          // Only in development mode
-          if (process.env.NODE_ENV === 'development') {
-            const originalConsoleError = console.error;
-            console.error = (...args) => {
-              if (args[0]?.includes && args[0].includes('Hydration failed because')) {
-                if (
-                  args[0].includes('data-windsurf-page-id') ||
-                  args[0].includes('data-windsurf-extension-id')
-                ) {
-                  return; // Suppress the warning
+        {/* Development-only script to suppress Windsurf hydration warnings */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'development') {
+              const originalConsoleError = console.error;
+              console.error = function(...args) {
+                const message = args[0];
+                if (typeof message === 'string' && (
+                  message.includes('Windsurf') ||
+                  message.includes('data-windsurf') ||
+                  message.includes('hydration')
+                )) {
+                  return; // Suppress Windsurf-related hydration warnings
                 }
-              }
-              originalConsoleError.apply(console, args);
-            };
-          }
-        `}} />
+                originalConsoleError.apply(console, args);
+              };
+            }
+          `
+          }}
+        />
       </head>
       <body className="h-full bg-ios-gray-light font-sf-pro antialiased">
-        <KonvaDragProvider>
+        <RobustDragProvider>
           {children}
-        </KonvaDragProvider>
+        </RobustDragProvider>
       </body>
     </html>
   )
