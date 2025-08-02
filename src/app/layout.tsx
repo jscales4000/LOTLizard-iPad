@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { RobustDragProvider } from '@/context/RobustDragContext'
+import { UnifiedDragProvider } from '@/contexts/UnifiedDragContext'
+import { CanvasScaleProvider } from '@/contexts/CanvasScaleContext'
+import DragErrorBoundary from '@/components/DragErrorBoundary'
+import ScaleAwareDragPreview from '@/components/ScaleAwareDragPreview'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -51,9 +54,14 @@ export default function RootLayout({
         />
       </head>
       <body className="h-full bg-ios-gray-light font-sf-pro antialiased">
-        <RobustDragProvider>
-          {children}
-        </RobustDragProvider>
+        <DragErrorBoundary>
+          <CanvasScaleProvider>
+            <UnifiedDragProvider>
+              {children}
+              <ScaleAwareDragPreview />
+            </UnifiedDragProvider>
+          </CanvasScaleProvider>
+        </DragErrorBoundary>
       </body>
     </html>
   )

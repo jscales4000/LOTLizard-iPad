@@ -13,6 +13,12 @@ interface ToolbarProps {
   onToggleMeasure: () => void
   settingsOpen: boolean
   onToggleSettings: () => void
+  // Equipment manipulation tools
+  selectedEquipmentId?: string | null
+  isMovingEquipment?: boolean
+  isRotatingEquipment?: boolean
+  onMoveEquipment?: () => void
+  onRotateEquipment?: () => void
 }
 
 const drawerToggles = [
@@ -30,7 +36,12 @@ export default function Toolbar({
   imageOpen, onToggleImage,
   projectsOpen, onToggleProjects,
   measureOpen, onToggleMeasure,
-  settingsOpen, onToggleSettings
+  settingsOpen, onToggleSettings,
+  selectedEquipmentId,
+  isMovingEquipment = false,
+  isRotatingEquipment = false,
+  onMoveEquipment,
+  onRotateEquipment
 }: ToolbarProps) {
   return (
     <div className="
@@ -96,6 +107,47 @@ export default function Toolbar({
           )
         })}
       </div>
+      
+      {/* Equipment Manipulation Tools - Only show when equipment is selected */}
+      {selectedEquipmentId && (
+        <div className="
+          flex landscape:flex-col portrait:flex-row 
+          landscape:space-y-2 portrait:space-x-2
+          landscape:mt-4 portrait:ml-4
+        ">
+          {/* Move Button */}
+          <button
+            onClick={onMoveEquipment}
+            className={`
+              btn-touch
+              ${isMovingEquipment
+                ? 'bg-green-500 text-white'
+                : 'bg-ios-gray-light text-ios-gray-dark hover:bg-gray-100'
+              }
+            `}
+            title="Move Equipment (M)"
+            disabled={!onMoveEquipment}
+          >
+            <span className="text-lg">📐</span>
+          </button>
+          
+          {/* Rotate Button */}
+          <button
+            onClick={onRotateEquipment}
+            className={`
+              btn-touch
+              ${isRotatingEquipment
+                ? 'bg-orange-500 text-white'
+                : 'bg-ios-gray-light text-ios-gray-dark hover:bg-gray-100'
+              }
+            `}
+            title="Rotate Equipment (R)"
+            disabled={!onRotateEquipment}
+          >
+            <span className="text-lg">🔄</span>
+          </button>
+        </div>
+      )}
     </div>
   )
 }

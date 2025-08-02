@@ -1,13 +1,43 @@
+export type EquipmentShape = 'rectangle' | 'circle'
+export type ClearanceShape = 'rectangle' | 'circle'
+
+export interface EquipmentDimensions {
+  // For rectangle: width x length
+  width?: number // feet
+  length?: number // feet
+  height?: number // feet
+  // For circle: radius
+  radius?: number // feet
+}
+
+export interface ClearanceArea {
+  shape: ClearanceShape
+  // For rectangle clearance: individual side clearances
+  top?: number // feet
+  bottom?: number // feet
+  left?: number // feet
+  right?: number // feet
+  // For circle clearance: radius
+  radius?: number // feet
+}
+
 export interface EquipmentItem {
   id: string
   name: string
   category: string
   size: 'Small' | 'Medium' | 'Large' | 'Extra Large'
-  dimensions: {
-    width: number // feet
-    length: number // feet
-    height?: number // feet
-  }
+  
+  // Shape and dimensions
+  shape?: EquipmentShape // Optional during migration
+  dimensions: EquipmentDimensions
+  
+  // Clearance/footprint area (safety zone around equipment)
+  clearance?: ClearanceArea
+  
+  // Scale factor for map integration (feet per pixel or similar)
+  scaleFactor?: number
+  
+  // Existing properties
   capacity?: number
   powerRequirement?: string
   setupTime?: string
@@ -16,6 +46,11 @@ export interface EquipmentItem {
   thumbnail: string
   color: string
   popularity: number // 1-10 for sorting
+  
+  // Visual properties
+  opacity?: number // 0-1 for semi-transparent rendering
+  borderWidth?: number // pixels
+  borderColor?: string
 }
 
 export const equipmentCategories = [
@@ -58,7 +93,12 @@ export const equipmentDatabase: EquipmentItem[] = [
     name: 'Ferris Wheel',
     category: 'Rides',
     size: 'Extra Large',
-    dimensions: { width: 80, length: 80, height: 100 },
+    shape: 'circle',
+    dimensions: { radius: 40, height: 100 }, // 80ft diameter = 40ft radius
+    clearance: {
+      shape: 'circle',
+      radius: 50 // 10ft safety clearance around the wheel
+    },
     capacity: 48,
     powerRequirement: '480V, 100A',
     setupTime: '8-12 hours',

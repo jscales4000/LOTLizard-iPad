@@ -25,6 +25,11 @@ export default function Home() {
   const [satelliteImageData, setSatelliteImageData] = useState(null)
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentItem | null>(null)
   
+  // Equipment manipulation state
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string | null>(null)
+  const [isMovingEquipment, setIsMovingEquipment] = useState(false)
+  const [isRotatingEquipment, setIsRotatingEquipment] = useState(false)
+  
   // Calibration system
   const {
     calibrationState,
@@ -72,6 +77,23 @@ export default function Home() {
         break
     }
   }
+  
+  // Equipment manipulation handlers
+  const handleMoveEquipment = () => {
+    if (selectedEquipmentId) {
+      setIsMovingEquipment(true)
+      setIsRotatingEquipment(false)
+      console.log('🔄 Move mode activated from toolbar for:', selectedEquipmentId)
+    }
+  }
+  
+  const handleRotateEquipment = () => {
+    if (selectedEquipmentId) {
+      setIsRotatingEquipment(true)
+      setIsMovingEquipment(false)
+      console.log('🔄 Rotate mode activated from toolbar for:', selectedEquipmentId)
+    }
+  }
 
   return (
     <div className="h-full bg-ios-gray-light">
@@ -89,6 +111,11 @@ export default function Home() {
         onToggleMeasure={() => toggleDrawer('measure')}
         settingsOpen={settingsOpen}
         onToggleSettings={() => toggleDrawer('settings')}
+        selectedEquipmentId={selectedEquipmentId}
+        isMovingEquipment={isMovingEquipment}
+        isRotatingEquipment={isRotatingEquipment}
+        onMoveEquipment={handleMoveEquipment}
+        onRotateEquipment={handleRotateEquipment}
       />
       
       {/* Main Content Area - offset for fixed toolbar */}
@@ -114,6 +141,14 @@ export default function Home() {
                 setCalibrationOpen(false)
               }}
               satelliteImageData={satelliteImageData}
+              selectedEquipmentId={selectedEquipmentId}
+              isMovingEquipment={isMovingEquipment}
+              isRotatingEquipment={isRotatingEquipment}
+              onEquipmentSelectionChange={setSelectedEquipmentId}
+              onMoveRotateStateChange={(moving, rotating) => {
+                setIsMovingEquipment(moving)
+                setIsRotatingEquipment(rotating)
+              }}
             />
           </div>
         </div>

@@ -5,7 +5,8 @@ import { useCalibration, CalibrationPoint } from '@/lib/useCalibration'
 import CanvasToolOverlay from './CanvasToolOverlay'
 import { RobustCanvas } from './RobustCanvas'
 import { CanvasEquipmentItem, toCanvasEquipmentItem } from '@/types/canvasTypes'
-import { useRobustDrag } from '@/context/RobustDragContext'
+import { useUnifiedDrag } from '@/contexts/UnifiedDragContext'
+import EquipmentPropertyEditor from './EquipmentPropertyEditor'
 import dynamic from 'next/dynamic'
 
 // Konva imports temporarily removed to bypass cache issues
@@ -19,9 +20,15 @@ import './canvas.css'
 
 interface CanvasProps {
   selectedTool: string
-  isCalibrating: boolean
-  onCalibrationComplete: () => void
+  isCalibrating?: boolean
+  onCalibrationComplete?: () => void
   satelliteImageData?: any
+  // Equipment manipulation props
+  selectedEquipmentId?: string | null
+  isMovingEquipment?: boolean
+  isRotatingEquipment?: boolean
+  onEquipmentSelectionChange?: (equipmentId: string | null) => void
+  onMoveRotateStateChange?: (moving: boolean, rotating: boolean) => void
 }
 
 interface Equipment {
@@ -42,11 +49,42 @@ interface Equipment {
   }
 }
 
-export default function Canvas({ selectedTool, isCalibrating, onCalibrationComplete, satelliteImageData }: CanvasProps) {
+export default function Canvas({ 
+  selectedTool, 
+  isCalibrating = false, 
+  onCalibrationComplete, 
+  satelliteImageData,
+  selectedEquipmentId: propSelectedEquipmentId,
+  isMovingEquipment: propIsMovingEquipment = false,
+  isRotatingEquipment: propIsRotatingEquipment = false,
+  onEquipmentSelectionChange,
+  onMoveRotateStateChange
+}: CanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [equipment, setEquipment] = useState<CanvasEquipmentItem[]>([])
   const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null)
+  const [editingEquipment, setEditingEquipment] = useState<CanvasEquipmentItem | null>(null)
+  const [isPropertyEditorOpen, setIsPropertyEditorOpen] = useState(false)
+  
+  // Equipment move and rotate state - sync with page-level props
+  const [isMovingEquipment, setIsMovingEquipment] = useState(propIsMovingEquipment)
+  const [movingEquipmentId, setMovingEquipmentId] = useState<string | null>(propSelectedEquipmentId || null)
+  const [moveStartPos, setMoveStartPos] = useState({ x: 0, y: 0 })
+  const [isRotatingEquipment, setIsRotatingEquipment] = useState(propIsRotatingEquipment)
+  const [rotatingEquipmentId, setRotatingEquipmentId] = useState<string | null>(propSelectedEquipmentId || null)
+  
+  // Sync local state with page-level props
+  useEffect(() => {
+    setIsMovingEquipment(propIsMovingEquipment)
+    setIsRotatingEquipment(propIsRotatingEquipment)
+    if (propIsMovingEquipment) {
+      setMovingEquipmentId(propSelectedEquipmentId || null)
+    }
+    if (propIsRotatingEquipment) {
+      setRotatingEquipmentId(propSelectedEquipmentId || null)
+    }
+  }, [propIsMovingEquipment, propIsRotatingEquipment, propSelectedEquipmentId])
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 })
   const [scale, setScale] = useState(1)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -60,8 +98,497 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
   // Feature flag for robust canvas implementation
   const [useRobustCanvas, setUseRobustCanvas] = useState(true)
   
-  // Robust drag context
-  const { isDragging: isRobustDragging, draggedItem } = useRobustDrag()
+  // Unified drag context
+  const { dragState } = useUnifiedDrag()
+  const { isDragging: isRobustDragging, dragItem: draggedItem } = dragState
+  
+  // Zoom and pan handlers
+  const handleZoomIn = useCallback(() => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect || rect.width === 0 || rect.height === 0) {
+      // Fallback: simple zoom without offset calculation
+      const newScale = Math.min((scale || 1) * 1.2, 10)
+      if (isFinite(newScale) && !isNaN(newScale)) {
+        setScale(newScale)
+        console.log('🔍 Zoom In (fallback):', { newScale: newScale.toFixed(2) })
+      }
+      return
+    }
+    
+    // Validate current scale and offset
+    const currentScale = isFinite(scale) && !isNaN(scale) ? scale : 1
+    const currentOffsetX = isFinite(offset.x) && !isNaN(offset.x) ? offset.x : 0
+    const currentOffsetY = isFinite(offset.y) && !isNaN(offset.y) ? offset.y : 0
+    
+    // Zoom towards center of canvas
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    
+    const zoomFactor = 1.2
+    const newScale = Math.min(currentScale * zoomFactor, 10)
+    
+    // Calculate new offset to zoom towards center with validation
+    let newOffsetX = centerX - (centerX - currentOffsetX) * (newScale / currentScale)
+    let newOffsetY = centerY - (centerY - currentOffsetY) * (newScale / currentScale)
+    
+    // Validate calculated offsets
+    if (!isFinite(newOffsetX) || isNaN(newOffsetX)) newOffsetX = 0
+    if (!isFinite(newOffsetY) || isNaN(newOffsetY)) newOffsetY = 0
+    
+    const newOffset = { x: newOffsetX, y: newOffsetY }
+    
+    setScale(newScale)
+    setOffset(newOffset)
+    console.log('🔍 Zoom In:', { 
+      newScale: newScale.toFixed(2),
+      newOffset: { x: newOffset.x.toFixed(1), y: newOffset.y.toFixed(1) }
+    })
+  }, [scale, offset])
+  
+  const handleZoomOut = useCallback(() => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect || rect.width === 0 || rect.height === 0) {
+      // Fallback: simple zoom without offset calculation
+      const newScale = Math.max((scale || 1) / 1.2, 0.1)
+      if (isFinite(newScale) && !isNaN(newScale)) {
+        setScale(newScale)
+        console.log('🔍 Zoom Out (fallback):', { newScale: newScale.toFixed(2) })
+      }
+      return
+    }
+    
+    // Validate current scale and offset
+    const currentScale = isFinite(scale) && !isNaN(scale) ? scale : 1
+    const currentOffsetX = isFinite(offset.x) && !isNaN(offset.x) ? offset.x : 0
+    const currentOffsetY = isFinite(offset.y) && !isNaN(offset.y) ? offset.y : 0
+    
+    // Zoom towards center of canvas
+    const centerX = rect.width / 2
+    const centerY = rect.height / 2
+    
+    const zoomFactor = 0.8
+    const newScale = Math.max(currentScale * zoomFactor, 0.1)
+    
+    // Calculate new offset to zoom towards center with validation
+    let newOffsetX = centerX - (centerX - currentOffsetX) * (newScale / currentScale)
+    let newOffsetY = centerY - (centerY - currentOffsetY) * (newScale / currentScale)
+    
+    // Validate calculated offsets
+    if (!isFinite(newOffsetX) || isNaN(newOffsetX)) newOffsetX = 0
+    if (!isFinite(newOffsetY) || isNaN(newOffsetY)) newOffsetY = 0
+    
+    const newOffset = { x: newOffsetX, y: newOffsetY }
+    
+    setScale(newScale)
+    setOffset(newOffset)
+    console.log('🔍 Zoom Out:', { 
+      newScale: newScale.toFixed(2),
+      newOffset: { x: newOffset.x.toFixed(1), y: newOffset.y.toFixed(1) }
+    })
+  }, [scale, offset])
+  
+  const handleResetView = useCallback(() => {
+    // Always use safe, validated values
+    const safeScale = 1
+    const safeOffset = { x: 0, y: 0 }
+    
+    setScale(safeScale)
+    setOffset(safeOffset)
+    console.log('🏠 Reset View: Scale 1.0, Offset (0,0)')
+  }, [])
+  
+  const handleFitToScreen = useCallback(() => {
+    if (equipment.length === 0) {
+      // If no equipment, show a reasonable default view
+      setScale(1)
+      setOffset({ x: 0, y: 0 })
+      console.log('📐 Fit to Screen: No equipment, showing default view')
+      return
+    }
+    
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect || rect.width === 0 || rect.height === 0) {
+      console.warn('📐 Fit to Screen: Invalid container rect')
+      return
+    }
+    
+    // Calculate bounding box of all equipment with proper validation
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    let validEquipmentCount = 0
+    
+    equipment.forEach(item => {
+      // Validate equipment position
+      if (typeof item.x !== 'number' || typeof item.y !== 'number' || 
+          isNaN(item.x) || isNaN(item.y)) {
+        console.warn('Invalid equipment position:', item)
+        return
+      }
+      
+      const width = Math.max(item.width || 40, 10)  // Minimum 10px width
+      const height = Math.max(item.height || 40, 10)  // Minimum 10px height
+      const left = item.x - width / 2
+      const right = item.x + width / 2
+      const top = item.y - height / 2
+      const bottom = item.y + height / 2
+      
+      minX = Math.min(minX, left)
+      minY = Math.min(minY, top)
+      maxX = Math.max(maxX, right)
+      maxY = Math.max(maxY, bottom)
+      validEquipmentCount++
+    })
+    
+    // If no valid equipment found, reset view
+    if (validEquipmentCount === 0) {
+      setScale(1)
+      setOffset({ x: 0, y: 0 })
+      console.log('📐 Fit to Screen: No valid equipment found')
+      return
+    }
+    
+    // Validate bounds
+    if (!isFinite(minX) || !isFinite(minY) || !isFinite(maxX) || !isFinite(maxY)) {
+      console.warn('📐 Fit to Screen: Invalid bounds calculated')
+      setScale(1)
+      setOffset({ x: 0, y: 0 })
+      return
+    }
+    
+    // Calculate content dimensions
+    const contentWidth = Math.max(maxX - minX, 40)  // Minimum based on equipment size
+    const contentHeight = Math.max(maxY - minY, 40)
+    
+    // Use generous padding to prevent over-zooming
+    const paddingX = Math.max(rect.width * 0.2, 100)  // 20% padding, minimum 100px
+    const paddingY = Math.max(rect.height * 0.2, 100)
+    
+    // Calculate available space
+    const availableWidth = Math.max(rect.width - (paddingX * 2), 200)
+    const availableHeight = Math.max(rect.height - (paddingY * 2), 200)
+    
+    // Calculate scale with validation
+    const scaleX = availableWidth / contentWidth
+    const scaleY = availableHeight / contentHeight
+    
+    // Use the smaller scale, but be conservative to prevent over-zooming
+    let calculatedScale = Math.min(scaleX, scaleY)
+    
+    // Conservative zoom limits: don't zoom in beyond 150% or out below 20%
+    let newScale = Math.max(Math.min(calculatedScale, 1.5), 0.2)
+    
+    // If the calculated scale is close to current scale, don't change much
+    const currentScale = isFinite(scale) && !isNaN(scale) ? scale : 1
+    if (Math.abs(newScale - currentScale) < 0.1) {
+      // If the difference is small, just center without changing scale
+      newScale = currentScale
+    }
+    
+    // For single items that are small, prefer to keep at 100% zoom if reasonable
+    if (validEquipmentCount === 1 && newScale > 1.2) {
+      newScale = Math.min(newScale, 1.2)  // Cap at 120% for single items
+    }
+    
+    // Validate scale
+    if (!isFinite(newScale) || isNaN(newScale)) {
+      console.warn('📐 Fit to Screen: Invalid scale calculated')
+      newScale = 1
+    }
+    
+    // Calculate center point of all equipment
+    const contentCenterX = (minX + maxX) / 2
+    const contentCenterY = (minY + maxY) / 2
+    
+    // Calculate offset to center the equipment with validation
+    let newOffsetX = rect.width / 2 - contentCenterX * newScale
+    let newOffsetY = rect.height / 2 - contentCenterY * newScale
+    
+    // Validate offsets
+    if (!isFinite(newOffsetX) || isNaN(newOffsetX)) newOffsetX = 0
+    if (!isFinite(newOffsetY) || isNaN(newOffsetY)) newOffsetY = 0
+    
+    const newOffset = { x: newOffsetX, y: newOffsetY }
+    
+    setScale(newScale)
+    setOffset(newOffset)
+    
+    console.log('📐 Fit to Screen:', { 
+      equipmentCount: validEquipmentCount,
+      contentBounds: { minX: minX.toFixed(1), minY: minY.toFixed(1), maxX: maxX.toFixed(1), maxY: maxY.toFixed(1) },
+      contentSize: { width: contentWidth.toFixed(1), height: contentHeight.toFixed(1) },
+      calculatedScale: calculatedScale.toFixed(2),
+      finalScale: newScale.toFixed(2),
+      newOffset: { x: newOffset.x.toFixed(1), y: newOffset.y.toFixed(1) },
+      reasoning: validEquipmentCount === 1 ? 'Single item - conservative zoom' : 'Multiple items - fit all'
+    })
+  }, [equipment, scale])
+  
+  const handleMaxOut = useCallback(() => {
+    // Zoom out to minimum scale and center view with safe values
+    const safeMinScale = 0.1
+    const safeOffset = { x: 0, y: 0 }
+    
+    // Validate values before setting
+    if (isFinite(safeMinScale) && !isNaN(safeMinScale)) {
+      setScale(safeMinScale)
+      setOffset(safeOffset)
+      console.log('⛶ Max Out: Minimum scale', { scale: safeMinScale })
+    } else {
+      console.warn('⛶ Max Out: Invalid scale, using fallback')
+      setScale(0.5)
+      setOffset({ x: 0, y: 0 })
+    }
+  }, [])
+  
+  // Equipment interaction handlers
+  const handleEquipmentClick = useCallback((equipmentId: string, event?: { shiftKey?: boolean, ctrlKey?: boolean, button?: number }) => {
+    console.log('Equipment clicked:', equipmentId, 'button:', event?.button)
+    const clickedEquipment = equipment.find(item => item.id === equipmentId)
+    console.log('Found equipment:', clickedEquipment)
+    if (clickedEquipment) {
+      setSelectedEquipment(equipmentId)
+      
+      // Notify page level of selection change
+      onEquipmentSelectionChange?.(equipmentId)
+      
+      // If Shift key is held, start move mode
+      if (event?.shiftKey) {
+        setIsMovingEquipment(true)
+        setMovingEquipmentId(equipmentId)
+        onMoveRotateStateChange?.(true, false)
+        console.log('🔄 Starting move mode for:', clickedEquipment.name)
+      }
+      // If Ctrl key is held, start rotate mode
+      else if (event?.ctrlKey) {
+        setIsRotatingEquipment(true)
+        setRotatingEquipmentId(equipmentId)
+        onMoveRotateStateChange?.(false, true)
+        console.log('🔄 Starting rotate mode for:', clickedEquipment.name)
+      }
+      // Right-click (button 2) opens property editor
+      else if (event?.button === 2) {
+        setEditingEquipment(clickedEquipment)
+        setIsPropertyEditorOpen(true)
+        console.log('Property editor opened for:', clickedEquipment.name)
+      }
+      // Normal left-click just selects the equipment
+      else {
+        console.log('Equipment selected:', clickedEquipment.name)
+      }
+    }
+  }, [equipment, onEquipmentSelectionChange, onMoveRotateStateChange])
+  
+  const handleEquipmentSave = useCallback((updatedEquipment: CanvasEquipmentItem) => {
+    setEquipment(prev => prev.map(item => 
+      item.id === updatedEquipment.id ? updatedEquipment : item
+    ))
+    setEditingEquipment(null)
+    setIsPropertyEditorOpen(false)
+  }, [])
+  
+  const handlePropertyEditorClose = useCallback(() => {
+    setEditingEquipment(null)
+    setIsPropertyEditorOpen(false)
+  }, [])
+  
+  const handleEquipmentDelete = useCallback((equipmentId: string) => {
+    setEquipment(prev => prev.filter(item => item.id !== equipmentId))
+    if (selectedEquipment === equipmentId) {
+      setSelectedEquipment(null)
+    }
+  }, [selectedEquipment])
+  
+  useEffect(() => {
+    if (selectedEquipment) {
+      const selectedItem = equipment.find(item => item.id === selectedEquipment)
+      if (selectedItem) {
+        setEditingEquipment(selectedItem)
+      }
+    }
+  }, [selectedEquipment, equipment])
+  
+
+  
+  // Equipment move handlers
+  const handleEquipmentMove = useCallback((equipmentId: string, newPosition: { x: number, y: number }) => {
+    setEquipment(prev => prev.map(item => 
+      item.id === equipmentId 
+        ? { ...item, x: newPosition.x, y: newPosition.y }
+        : item
+    ))
+    console.log('📍 Equipment moved:', equipmentId, 'to:', newPosition)
+  }, [])
+  
+  const handleEquipmentRotate = useCallback((equipmentId: string, newRotation: number) => {
+    setEquipment(prev => prev.map(item => 
+      item.id === equipmentId 
+        ? { ...item, rotation: newRotation }
+        : item
+    ))
+    console.log('🔄 Equipment rotated:', equipmentId, 'to:', newRotation, 'degrees')
+  }, [])
+  
+  const stopMoveRotate = useCallback(() => {
+    setIsMovingEquipment(false)
+    setMovingEquipmentId(null)
+    setIsRotatingEquipment(false)
+    setRotatingEquipmentId(null)
+    console.log('✅ Stopped move/rotate mode')
+  }, [])
+  
+  // Keyboard shortcuts for move/rotate modes
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape key to exit move/rotate modes
+      if (e.key === 'Escape') {
+        stopMoveRotate()
+        return
+      }
+      
+      // Only handle shortcuts if equipment is selected
+      if (!selectedEquipment) return
+      
+      // M key for move mode
+      if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault()
+        setIsMovingEquipment(true)
+        setMovingEquipmentId(selectedEquipment)
+        setIsRotatingEquipment(false)
+        setRotatingEquipmentId(null)
+        console.log('🔄 Move mode activated via keyboard')
+      }
+      
+      // R key for rotate mode
+      if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault()
+        setIsRotatingEquipment(true)
+        setRotatingEquipmentId(selectedEquipment)
+        setIsMovingEquipment(false)
+        setMovingEquipmentId(null)
+        console.log('🔄 Rotate mode activated via keyboard')
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedEquipment, stopMoveRotate])
+  
+  // Mouse wheel zoom handler
+  const handleCanvasWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault()
+    
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+    
+    // Get mouse position relative to canvas
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    
+    // Calculate zoom factor
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1
+    const newScale = Math.max(0.1, Math.min(5, scale * zoomFactor))
+    
+    // Calculate new offset to zoom towards mouse position
+    const newOffset = {
+      x: mouseX - (mouseX - offset.x) * (newScale / scale),
+      y: mouseY - (mouseY - offset.y) * (newScale / scale)
+    }
+    
+    setScale(newScale)
+    setOffset(newOffset)
+  }, [scale, offset])
+
+
+
+  // Pan handlers for middle mouse button or space+drag
+  const [isPanning, setIsPanning] = useState(false)
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 })
+  
+  const handleCanvasMouseDown = useCallback((e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+    
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    
+    // If in move mode and clicking on moving equipment, start move
+    if (isMovingEquipment && movingEquipmentId) {
+      const canvasX = (mouseX / scale) - offset.x
+      const canvasY = (mouseY / scale) - offset.y
+      setMoveStartPos({ x: canvasX, y: canvasY })
+      return
+    }
+    
+    // Pan mode (middle mouse or Ctrl+left click)
+    if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
+      e.preventDefault()
+      setIsPanning(true)
+      setPanStart({ x: e.clientX - offset.x, y: e.clientY - offset.y })
+    }
+  }, [offset, isMovingEquipment, movingEquipmentId, scale])
+  
+  const handleCanvasMouseMove = useCallback((e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+    
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    
+    // Handle equipment movement
+    if (isMovingEquipment && movingEquipmentId) {
+      e.preventDefault()
+      const canvasX = (mouseX / scale) - offset.x
+      const canvasY = (mouseY / scale) - offset.y
+      handleEquipmentMove(movingEquipmentId, { x: canvasX, y: canvasY })
+      return
+    }
+    
+    // Handle equipment rotation
+    if (isRotatingEquipment && rotatingEquipmentId) {
+      e.preventDefault()
+      const targetEquipment = equipment.find(item => item.id === rotatingEquipmentId)
+      if (targetEquipment) {
+        // Convert screen coordinates to canvas coordinates
+        const canvasX = (mouseX - offset.x) / scale
+        const canvasY = (mouseY - offset.y) / scale
+        const centerX = targetEquipment.x
+        const centerY = targetEquipment.y
+        
+        // Calculate angle from equipment center to mouse position
+        const deltaX = canvasX - centerX
+        const deltaY = canvasY - centerY
+        const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI)
+        
+        // Normalize angle to 0-360 degrees
+        const normalizedAngle = ((angle % 360) + 360) % 360
+        
+        console.log('🔄 Rotating equipment:', rotatingEquipmentId, 'to angle:', normalizedAngle.toFixed(1))
+        handleEquipmentRotate(rotatingEquipmentId, normalizedAngle)
+      }
+      return
+    }
+    
+    // Handle canvas panning
+    if (isPanning) {
+      e.preventDefault()
+      setOffset({
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y
+      })
+    }
+  }, [isPanning, panStart, isMovingEquipment, movingEquipmentId, isRotatingEquipment, rotatingEquipmentId, scale, offset, handleEquipmentMove, handleEquipmentRotate])
+  
+  const handleCanvasMouseUp = useCallback((e: React.MouseEvent) => {
+    // Stop move/rotate modes
+    if (isMovingEquipment || isRotatingEquipment) {
+      stopMoveRotate()
+      return
+    }
+    
+    // Stop panning
+    if (e.button === 1 || isPanning) {
+      setIsPanning(false)
+    }
+  }, [isPanning, isMovingEquipment, isRotatingEquipment, stopMoveRotate])
   
   // Load satellite image when data changes
   useEffect(() => {
@@ -168,27 +695,47 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
       }
     }
     
-    // Draw grid
+    // Draw adaptive grid that adjusts to zoom level
     ctx.strokeStyle = '#e5e7eb'
-    ctx.lineWidth = 0.5 / scale
-    const gridSize = 20
+    ctx.lineWidth = Math.max(0.5 / scale, 0.1)
+    
+    // Adaptive grid size based on zoom level to prevent nested grids
+    let baseGridSize = 20
+    let gridSize = baseGridSize
+    
+    // Adjust grid size based on scale to prevent overcrowding
+    if (scale < 0.5) {
+      gridSize = baseGridSize * 4 // Larger grid when zoomed out
+    } else if (scale < 0.25) {
+      gridSize = baseGridSize * 8 // Even larger grid when very zoomed out
+    } else if (scale < 0.1) {
+      gridSize = baseGridSize * 16 // Very large grid when extremely zoomed out
+    }
+    
+    // Calculate grid bounds
     const startX = Math.floor(-offset.x / scale / gridSize) * gridSize
     const startY = Math.floor(-offset.y / scale / gridSize) * gridSize
     const endX = startX + (canvas.width / scale) + gridSize
     const endY = startY + (canvas.height / scale) + gridSize
     
-    for (let x = startX; x < endX; x += gridSize) {
-      ctx.beginPath()
-      ctx.moveTo(x, startY)
-      ctx.lineTo(x, endY)
-      ctx.stroke()
-    }
-    
-    for (let y = startY; y < endY; y += gridSize) {
-      ctx.beginPath()
-      ctx.moveTo(startX, y)
-      ctx.lineTo(endX, y)
-      ctx.stroke()
+    // Only draw grid if it won't be too dense
+    const gridSpacingInPixels = gridSize * scale
+    if (gridSpacingInPixels >= 5) { // Only draw if grid lines are at least 5 pixels apart
+      // Draw vertical grid lines
+      for (let x = startX; x < endX; x += gridSize) {
+        ctx.beginPath()
+        ctx.moveTo(x, startY)
+        ctx.lineTo(x, endY)
+        ctx.stroke()
+      }
+      
+      // Draw horizontal grid lines
+      for (let y = startY; y < endY; y += gridSize) {
+        ctx.beginPath()
+        ctx.moveTo(startX, y)
+        ctx.lineTo(endX, y)
+        ctx.stroke()
+      }
     }
     
     // Draw equipment
@@ -518,49 +1065,7 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
     setDraggedCalibrationPoint(null)
   }, [])
 
-  // Canvas tool functions
-  const handleZoomIn = useCallback(() => {
-    const newScale = Math.min(5, scale * 1.2)
-    setScale(newScale)
-  }, [scale])
-  
-  const handleZoomOut = useCallback(() => {
-    const newScale = Math.max(0.1, scale * 0.8)
-    setScale(newScale)
-  }, [scale])
-  
-  const handleResetView = useCallback(() => {
-    setScale(1)
-    setOffset({ x: 0, y: 0 })
-  }, [])
-  
-  const handleFitToScreen = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    
-    // Calculate scale to fit content
-    const padding = 50
-    const availableWidth = canvas.width - padding * 2
-    const availableHeight = canvas.height - padding * 2
-    
-    // Assuming content area of 1000x1000 units
-    const contentWidth = 1000
-    const contentHeight = 1000
-    
-    const scaleX = availableWidth / contentWidth
-    const scaleY = availableHeight / contentHeight
-    const newScale = Math.min(scaleX, scaleY, 1)
-    
-    setScale(newScale)
-    setOffset({ 
-      x: (canvas.width - contentWidth * newScale) / 2,
-      y: (canvas.height - contentHeight * newScale) / 2
-    })
-  }, [])
-  
-  const handleMaxOut = useCallback(() => {
-    setScale(5)
-  }, [])
+  // Canvas tool functions removed - using improved versions above
 
   // Handle wheel zoom
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -597,7 +1102,7 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
   // Handle calibration save
   const handleCalibrationSave = useCallback(() => {
     saveCalibration()
-    onCalibrationComplete()
+    onCalibrationComplete?.()
   }, [saveCalibration, onCalibrationComplete])
   
   // Handle calibration cancel
@@ -637,9 +1142,14 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
         e.preventDefault();
         e.currentTarget.classList.remove('drag-active');
       }}
+      onWheel={handleCanvasWheel}
+      onMouseDown={handleCanvasMouseDown}
+      onMouseMove={handleCanvasMouseMove}
+      onMouseUp={handleCanvasMouseUp}
       style={{ 
         touchAction: 'none',
         position: 'relative',
+        cursor: isPanning ? 'grabbing' : 'grab'
       }}>
       {useRobustCanvas ? (
         // New robust canvas implementation with timing fixes
@@ -648,7 +1158,13 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
           height={canvasSize.height}
           equipment={equipment}
           onEquipmentUpdate={setEquipment}
+          onEquipmentClick={handleEquipmentClick}
+          scale={scale}
+          offset={offset}
           className="w-full h-full"
+          selectedEquipmentId={selectedEquipment}
+          isMovingEquipment={isMovingEquipment}
+          isRotatingEquipment={isRotatingEquipment}
         />
       ) : (
         // Legacy canvas implementation
@@ -693,8 +1209,8 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
         </div>
       )}
       
-      {/* Instructions */}
-      {equipment.length === 0 && !calibrationState.isActive && (
+      {/* Instructions - DISABLED FOR TESTING */}
+      {false && equipment.length === 0 && !calibrationState.isActive && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center text-ios-gray">
             <div className="text-6xl mb-4">🎪</div>
@@ -718,6 +1234,14 @@ export default function Canvas({ selectedTool, isCalibrating, onCalibrationCompl
         onReset={handleResetView}
         onFit={handleFitToScreen}
         onMaxOut={handleMaxOut}
+      />
+      
+      {/* Equipment Property Editor */}
+      <EquipmentPropertyEditor
+        equipment={editingEquipment}
+        isOpen={isPropertyEditorOpen}
+        onClose={handlePropertyEditorClose}
+        onSave={handleEquipmentSave}
       />
 
     </div>

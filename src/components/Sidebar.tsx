@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { X, Edit, Search } from 'lucide-react'
 import { equipmentDatabase, equipmentCategories, getEquipmentByCategory, searchEquipment, type EquipmentItem } from '../lib/equipmentDatabase'
-import { useRobustDrag } from '@/context/RobustDragContext'
+import { useUnifiedDrag } from '@/contexts/UnifiedDragContext'
 
 interface SidebarProps {
   isOpen: boolean
@@ -32,8 +32,13 @@ export default function Sidebar({ isOpen, onClose, onToggleProperties, onEquipme
     onEquipmentSelect?.(equipment)
   }
   
-  // Robust drag context
-  const { initiateDrag, completeDrop, debugState } = useRobustDrag()
+  // Unified drag context
+  const { 
+    dragState, 
+    isMobile, 
+    handleMouseDown, 
+    handleTouchStart 
+  } = useUnifiedDrag()
   
   // Register callback to reset selection when equipment is placed
   useEffect(() => {
@@ -49,116 +54,40 @@ export default function Sidebar({ isOpen, onClose, onToggleProperties, onEquipme
     }
   }, [])
   
-  // Robust drag handler with selection
+  // Unified drag handler with selection
   const handleEquipmentMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, equipment: EquipmentItem) => {
       console.log('👆 SIDEBAR: Equipment mousedown', equipment.name);
       
-      // Only left mouse button triggers drag
-      if (e.button !== 0) return
-    
       // Immediately select the equipment on mousedown
       setSelectedEquipment(equipment)
       onEquipmentSelect?.(equipment)
       
-      console.log('🚀 Starting simple drag for:', equipment.name)
-      
-      // Prevent default to avoid text selection
-      e.preventDefault()
-      
-      let hasDragged = false
-      const startPos = { x: e.clientX, y: e.clientY }
-      
-      // Set up mouse move and mouse up handlers
-      const handleMouseMove = (moveEvent: MouseEvent) => {
-        const distance = Math.sqrt(
-          Math.pow(moveEvent.clientX - startPos.x, 2) + 
-          Math.pow(moveEvent.clientY - startPos.y, 2)
-        )
-        
-        // Start drag if moved more than 5 pixels
-        if (distance > 5 && !hasDragged) {
-          hasDragged = true
-          initiateDrag(equipment, { x: moveEvent.clientX, y: moveEvent.clientY })
-        }
+      // Use unified drag handler
+      const success = handleMouseDown(e, equipment, 'EQUIPMENT')
+      if (!success) {
+        console.log('❌ SIDEBAR: Mouse down failed - invalid target')
       }
-      
-      const handleMouseUp = (upEvent: MouseEvent) => {
-        if (hasDragged) {
-          console.log('🎯 Attempting drop at:', { x: upEvent.clientX, y: upEvent.clientY })
-          const dropSuccess = completeDrop({ x: upEvent.clientX, y: upEvent.clientY })
-          console.log('✅ Drop completed:', dropSuccess ? 'SUCCESS' : 'FAILED')
-        }
-        
-        // Clean up event listeners
-        document.removeEventListener('mousemove', handleMouseMove)
-        document.removeEventListener('mouseup', handleMouseUp)
-      }
-      
-      // Add event listeners
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
-    }, [initiateDrag, completeDrop, setSelectedEquipment, onEquipmentSelect])
+    }, [handleMouseDown, setSelectedEquipment, onEquipmentSelect])
   
   // Touch handler for iPad support with selection
-  const handleTouchStart = useCallback((e: React.TouchEvent, equipment: EquipmentItem) => {
+  const handleEquipmentTouchStart = useCallback((e: React.TouchEvent, equipment: EquipmentItem) => {
     console.log('👆 SIDEBAR: Touch start for:', equipment.name)
     
     // Immediately select the equipment on touch start
     setSelectedEquipment(equipment)
     onEquipmentSelect?.(equipment)
     
-    // Prevent scrolling while dragging
-    e.preventDefault()
-    
-    const touch = e.touches[0]
-    let hasDragged = false
-    const startPos = { x: touch.clientX, y: touch.clientY }
-    
-    // Set up touch move and touch end handlers
-    const handleTouchMove = (moveEvent: TouchEvent) => {
-      if (moveEvent.touches.length > 0) {
-        const currentTouch = moveEvent.touches[0]
-        const distance = Math.sqrt(
-          Math.pow(currentTouch.clientX - startPos.x, 2) + 
-          Math.pow(currentTouch.clientY - startPos.y, 2)
-        )
-        
-        // Start drag if moved more than 5 pixels
-        if (distance > 5 && !hasDragged) {
-          hasDragged = true
-          initiateDrag(equipment, { x: currentTouch.clientX, y: currentTouch.clientY })
-        }
-      }
-    }
-    
-    const handleTouchEnd = (endEvent: TouchEvent) => {
-      if (hasDragged && endEvent.changedTouches.length > 0) {
-        const endTouch = endEvent.changedTouches[0]
-        console.log('🎯 Attempting touch drop at:', { x: endTouch.clientX, y: endTouch.clientY })
-        const dropSuccess = completeDrop({ x: endTouch.clientX, y: endTouch.clientY })
-        console.log('✅ Touch drop completed:', dropSuccess ? 'SUCCESS' : 'FAILED')
-      }
-      
-      // Clean up event listeners
-      document.removeEventListener('touchmove', handleTouchMove)
-      document.removeEventListener('touchend', handleTouchEnd)
-    }
-    
-    // Add event listeners
-    document.addEventListener('touchmove', handleTouchMove)
-    document.addEventListener('touchend', handleTouchEnd)
-  }, [initiateDrag, completeDrop, setSelectedEquipment, onEquipmentSelect])
+    // Use unified touch handler
+    handleTouchStart(e, equipment, 'EQUIPMENT')
+  }, [handleTouchStart, setSelectedEquipment, onEquipmentSelect])
 
   if (!isOpen) return null
 
   return (
     <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
-        onClick={onClose}
-      />
+      {/* Backdrop - REMOVED for drag-and-drop functionality */}
+      {/* Canvas needs to be interactive while drawer is open */}
       
       {/* Drawer */}
       <div className="fixed left-16 top-0 h-full w-80 bg-white shadow-lg z-50 flex flex-col">
@@ -243,7 +172,7 @@ export default function Sidebar({ isOpen, onClose, onToggleProperties, onEquipme
                   key={item.id}
                   onClick={() => handleEquipmentClick(item)}
                   onMouseDown={(e) => handleEquipmentMouseDown(e, item)}
-                  onTouchStart={(e) => handleTouchStart(e, item)}
+                  onTouchStart={(e) => handleEquipmentTouchStart(e, item)}
                   className={`bg-gray-50 rounded-lg p-3 hover:bg-gray-100 transition-all cursor-grab active:cursor-grabbing border-2 min-h-[120px] ${
                     selectedEquipment?.id === item.id
                       ? 'border-blue-500 bg-blue-50'
